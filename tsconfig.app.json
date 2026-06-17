@@ -9,12 +9,8 @@
     "skipLibCheck": true,
 
     "baseUrl": ".",
-    "ignoreDeprecations": "6.0",
-
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     },
 
     "moduleResolution": "bundler",
@@ -22,6 +18,7 @@
     "verbatimModuleSyntax": true,
     "moduleDetection": "force",
     "noEmit": true,
+
     "jsx": "react-jsx",
 
     "strict": true,
