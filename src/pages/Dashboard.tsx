@@ -54,7 +54,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
         <div className="max-w-[960px] mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HeartPulse className="w-7 h-7 text-[#0D9488]" />
-            <span className="text-xl font-bold text-[#0D9488]">MedLearn</span>
+            <span className="text-xl font-bold text-[#0D9488]">MedLearn by Andre Miethke</span>
           </div>
           <div className="flex items-center gap-3">
             <span className="text-xs font-medium text-[#5A6270] uppercase tracking-wider">Gesamtfortschritt</span>
@@ -100,7 +100,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.1 }}
           >
-            Deine interaktive Lernplattform für die MFA-Prüfung. Wähle ein Lernfeld und starte dein Lernen.
+            Deine interaktive Lernplattform für die MFA-Prüfung. Wähle ein Lernfeld und starte dein Lernen. Andre Miethke dein Dozent wird dich unterstützen!
           </motion.p>
 
           {/* Stats */}
