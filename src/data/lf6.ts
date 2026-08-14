@@ -1,272 +1,131 @@
 import type { LearningModule } from '@/types';
 
+const svg = (content: string) => `data:image/svg+xml;utf8,${encodeURIComponent(content)}`;
+
+const legalCapacity = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="470" viewBox="0 0 1000 470"><rect width="1000" height="470" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">Geschäftsfähigkeit nach Alter</text><g font-family="Arial" text-anchor="middle"><rect x="70" y="130" width="250" height="180" rx="24" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/><text x="195" y="180" font-size="25" font-weight="700">unter 7</text><text x="195" y="220" font-size="21">geschäftsunfähig</text><text x="195" y="260" font-size="17">Rechtsgeschäfte grundsätzlich</text><text x="195" y="285" font-size="17">nicht selbst wirksam</text><rect x="375" y="130" width="250" height="180" rx="24" fill="#fef3c7" stroke="#d97706" stroke-width="3"/><text x="500" y="180" font-size="25" font-weight="700">7 bis 17</text><text x="500" y="220" font-size="21">beschränkt geschäftsfähig</text><text x="500" y="260" font-size="17">Zustimmung kann nötig sein</text><text x="500" y="285" font-size="17">Ausnahmen beachten</text><rect x="680" y="130" width="250" height="180" rx="24" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/><text x="805" y="180" font-size="25" font-weight="700">ab 18</text><text x="805" y="220" font-size="21">voll geschäftsfähig</text><text x="805" y="260" font-size="17">Rechtsgeschäfte grundsätzlich</text><text x="805" y="285" font-size="17">selbst möglich</text></g><text x="500" y="395" text-anchor="middle" font-size="22" font-family="Arial" fill="#475569">Rechtsfähigkeit ≠ Geschäftsfähigkeit</text></svg>`);
+
+const stockCycle = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="520" viewBox="0 0 1000 520"><rect width="1000" height="520" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">Lagerhaltung als Kreislauf</text><g font-family="Arial" text-anchor="middle"><circle cx="500" cy="250" r="80" fill="#ccfbf1" stroke="#0d9488" stroke-width="4"/><text x="500" y="242" font-size="23" font-weight="700">Bestand</text><text x="500" y="274" font-size="18">kennen</text><rect x="90" y="190" width="210" height="115" rx="20" fill="#e0f2fe"/><text x="195" y="235" font-size="22" font-weight="700">Bedarf prüfen</text><text x="195" y="267" font-size="17">Was wird gebraucht?</text><rect x="700" y="190" width="210" height="115" rx="20" fill="#fef3c7"/><text x="805" y="235" font-size="22" font-weight="700">Bestellen</text><text x="805" y="267" font-size="17">nicht zu viel / zu wenig</text><rect x="395" y="385" width="210" height="95" rx="20" fill="#dcfce7"/><text x="500" y="425" font-size="22" font-weight="700">Verbrauchen</text><text x="500" y="455" font-size="17">FEFO beachten</text></g><g stroke="#64748b" stroke-width="4" fill="none"><path d="M300 245H415"/><path d="M585 245H700"/><path d="M805 305 C805 360 610 365 570 385"/><path d="M430 385 C390 365 195 360 195 305"/></g></svg>`);
+
+const fefo = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="430" viewBox="0 0 1000 430"><rect width="1000" height="430" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">FEFO: das früheste Verfallsdatum zuerst</text><g font-family="Arial" text-anchor="middle"><rect x="100" y="135" width="220" height="150" rx="20" fill="#fee2e2" stroke="#ef4444" stroke-width="3"/><text x="210" y="180" font-size="23" font-weight="700">Packung A</text><text x="210" y="225" font-size="20">Ablauf: 09/2026</text><text x="210" y="260" font-size="18">→ zuerst verwenden</text><rect x="390" y="135" width="220" height="150" rx="20" fill="#fef3c7" stroke="#d97706" stroke-width="3"/><text x="500" y="180" font-size="23" font-weight="700">Packung B</text><text x="500" y="225" font-size="20">Ablauf: 02/2027</text><rect x="680" y="135" width="220" height="150" rx="20" fill="#dcfce7" stroke="#16a34a" stroke-width="3"/><text x="790" y="180" font-size="23" font-weight="700">Packung C</text><text x="790" y="225" font-size="20">Ablauf: 11/2027</text></g><text x="500" y="355" text-anchor="middle" font-size="23" font-family="Arial" font-weight="700" fill="#0f766e">First Expired – First Out</text></svg>`);
+
+const waste = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500"><rect width="1000" height="500" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">Abfall: zuerst Risiko prüfen, dann entsorgen</text><g font-family="Arial" text-anchor="middle"><rect x="80" y="145" width="240" height="180" rx="24" fill="#dcfce7"/><text x="200" y="190" font-size="22" font-weight="700">normaler Abfall</text><text x="200" y="230" font-size="17">z. B. saubere</text><text x="200" y="255" font-size="17">Verpackungen</text><rect x="380" y="145" width="240" height="180" rx="24" fill="#fef3c7"/><text x="500" y="190" font-size="22" font-weight="700">spitz / scharf</text><text x="500" y="230" font-size="17">Kanülen, Lanzetten</text><text x="500" y="255" font-size="17">stichfest sammeln</text><rect x="680" y="145" width="240" height="180" rx="24" fill="#fee2e2"/><text x="800" y="190" font-size="22" font-weight="700">besonderes Risiko</text><text x="800" y="230" font-size="17">infektiös / chemisch</text><text x="800" y="255" font-size="17">Sonderweg beachten</text></g><text x="500" y="400" text-anchor="middle" font-size="22" font-family="Arial" fill="#475569">Praxisvorgaben + lokale Entsorgungsregeln sind verbindlich.</text></svg>`);
+
+const btmFlow = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500"><rect width="1000" height="500" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">BtM-Rezept: besonders kontrollierter Ablauf</text><g font-family="Arial" text-anchor="middle"><rect x="60" y="175" width="190" height="105" rx="20" fill="#e0f2fe"/><text x="155" y="215" font-size="20" font-weight="700">Arzt stellt aus</text><text x="155" y="247" font-size="16">personenbezogenes Formular</text><rect x="300" y="175" width="190" height="105" rx="20" fill="#fef3c7"/><text x="395" y="215" font-size="20" font-weight="700">Formal prüfen</text><text x="395" y="247" font-size="16">Angaben vollständig?</text><rect x="540" y="175" width="190" height="105" rx="20" fill="#dcfce7"/><text x="635" y="215" font-size="20" font-weight="700">Patient erhält</text><text x="635" y="247" font-size="16">sichere Übergabe</text><rect x="780" y="175" width="160" height="105" rx="20" fill="#ede9fe"/><text x="860" y="215" font-size="20" font-weight="700">Apotheke</text><text x="860" y="247" font-size="16">fristgerecht vorlegen</text></g><g stroke="#64748b" stroke-width="4"><path d="M250 228H300M490 228H540M730 228H780"/></g><text x="500" y="385" text-anchor="middle" font-size="22" font-family="Arial" font-weight="700" fill="#b45309">Für die Abgabe darf das Rezept bei Vorlage nicht älter als 7 Tage sein.</text></svg>`);
+
+const payment = svg(`
+<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="500" viewBox="0 0 1000 500"><rect width="1000" height="500" rx="32" fill="#f8fafc"/><text x="500" y="55" text-anchor="middle" font-size="30" font-family="Arial" font-weight="700">Zahlungsarten schnell unterscheiden</text><g font-family="Arial" text-anchor="middle"><rect x="70" y="140" width="200" height="190" rx="22" fill="#ccfbf1"/><text x="170" y="185" font-size="21" font-weight="700">Überweisung</text><text x="170" y="225" font-size="16">Zahler stößt</text><text x="170" y="250" font-size="16">Einzelzahlung an</text><rect x="295" y="140" width="200" height="190" rx="22" fill="#e0f2fe"/><text x="395" y="185" font-size="21" font-weight="700">Dauerauftrag</text><text x="395" y="225" font-size="16">Zahler stößt</text><text x="395" y="250" font-size="16">regelmäßig an</text><rect x="520" y="140" width="200" height="190" rx="22" fill="#fef3c7"/><text x="620" y="185" font-size="21" font-weight="700">Lastschrift</text><text x="620" y="225" font-size="16">Empfänger zieht</text><text x="620" y="250" font-size="16">mit Mandat ein</text><rect x="745" y="140" width="185" height="190" rx="22" fill="#dcfce7"/><text x="837" y="185" font-size="21" font-weight="700">Kartenzahlung</text><text x="837" y="225" font-size="16">Terminal / Karte</text><text x="837" y="250" font-size="16">Autorisierung</text></g></svg>`);
+
 export const lf6: LearningModule = {
   id: 'lf6',
   number: 6,
   title: 'Wirtschaftliche und ökologische Grundlagen',
-  subtitle: 'Rechtsgeschäfte, Lagerhaltung, Ökologie, BTM & Zahlungsverkehr',
-  description: 'Lerne Rechtsgeschäfte, Lagerhaltung in der Arztpraxis, ökologisches Verhalten, BTM-Bestimmungen und den Zahlungsverkehr.',
+  subtitle: 'Rechtsgeschäfte, Lagerhaltung, Entsorgung, BtM, Medizinprodukte und Zahlungsverkehr – leicht erklärt',
+  description: 'Anfängerfreundlicher Lernkurs mit vielen Schaubildern, Praxisfällen, Merksätzen und aktuellen Quellen. Wirtschaftliche und rechtliche Begriffe werden zuerst in Alltagssprache und danach mit Fachbegriffen erklärt.',
   difficulty: 'medium',
   icon: 'briefcase',
   heroImage: '/images/lf6-hero.jpg',
   topics: [
     {
-      id: 'rechtsgeschaefte',
-      title: 'Rechtsgeschäfte',
-      content: [
-        { type: 'heading', title: 'Was sind Rechtsgeschäfte?' },
-        { type: 'text', text: 'Rechtsgeschäfte sind Handlungen, die rechtliche Folgen haben. In einer Arztpraxis schließt du oft Rechtsgeschäfte ab – z.B. beim Bestellen von Medikamenten oder Abschluss von Verträgen.' },
-        { type: 'heading', title: 'Formen von Rechtsgeschäften' },
-        { type: 'list', items: [
-          'Schriftlich: Brief, Fax, E-Mail (z.B. Bestellung)',
-          'Mündlich: Gespräch, Telefon (z.B. Terminvereinbarung)',
-          'Elektronisch: Internet, Online-Formular (z.B. Online-Bestellung)',
-        ]},
-        { type: 'heading', title: 'Rechts- und Geschäftsfähigkeit' },
-        { type: 'definition', term: 'Rechtsfähigkeit', definition: 'Die Fähigkeit, Rechte und Pflichten zu haben. Diese hast du von Geburt an bis zum Tod.' },
-        { type: 'definition', term: 'Geschäftsfähigkeit', definition: 'Die Fähigkeit, gültige Rechtsgeschäfte zu tätigen. Diese ist altersabhängig.' },
-        { type: 'table', headers: ['Alter', 'Bezeichnung', 'Was ist erlaubt?'], rows: [
-          ['0-6 Jahre', 'geschäftsunfähig', 'Keine Rechtsgeschäfte gültig'],
-          ['7-17 Jahre', 'beschränkt geschäftsfähig', 'Nur mit Zustimmung der Eltern gültig'],
-          ['ab 18 Jahre', 'voll geschäftsfähig', 'Alle Rechtsgeschäfte gültig'],
-        ]},
-        { type: 'warning', title: 'Wichtig für Auszubildende', text: 'In der Ausbildung bist du beschränkt geschäftsfähig. Wichtige Verträge (z.B. Mietvertrag) brauchen die Zustimmung deiner Eltern!' },
-      ],
+      id: 'rechtsgeschaefte', title: '1. Rechtsgeschäfte und Geschäftsfähigkeit', content: [
+        { type: 'heading', title: 'Was ist ein Rechtsgeschäft?' },
+        { type: 'text', text: 'Ein Rechtsgeschäft ist eine Handlung, mit der eine rechtliche Folge gewollt herbeigeführt wird. In der Praxis begegnet dir das zum Beispiel beim Einkauf von Büromaterial, bei Verträgen oder bei Zahlungen. Entscheidend ist: Eine Person erklärt einen rechtlich bedeutsamen Willen.' },
+        { type: 'definition', term: 'Willenserklärung', definition: 'Eine Erklärung, mit der jemand einen bestimmten rechtlichen Erfolg erreichen will, zum Beispiel „Ich kaufe diese Ware für 50 Euro“.' },
+        { type: 'heading', title: 'Rechtsfähigkeit oder Geschäftsfähigkeit?' },
+        { type: 'definition', term: 'Rechtsfähigkeit', definition: 'Fähigkeit, Träger von Rechten und Pflichten zu sein. Menschen sind von der Vollendung der Geburt an rechtsfähig.' },
+        { type: 'definition', term: 'Geschäftsfähigkeit', definition: 'Fähigkeit, Rechtsgeschäfte selbst wirksam vorzunehmen. Sie hängt unter anderem vom Alter ab.' },
+        { type: 'image', src: legalCapacity, alt: 'Geschäftsfähigkeit nach Alter', caption: 'Für Prüfungen besonders wichtig: unter 7, 7–17, ab 18.' },
+        { type: 'warning', title: 'Wichtig', text: 'Die Aussage „Minderjährige brauchen immer die Zustimmung der Eltern“ ist zu grob. Es gibt gesetzliche Ausnahmen. Für die Prüfung zuerst die drei Altersgruppen sicher unterscheiden.' },
+        { type: 'info', title: 'Praxisbeispiel', text: 'Eine 16-Jährige kauft etwas. Frage zuerst: Ist sie beschränkt geschäftsfähig? Dann: Ist das Geschäft rechtlich lediglich vorteilhaft, wurde zugestimmt oder greift eine Ausnahme?' },
+        { type: 'video', title: 'Vertiefung: Geschäftsfähigkeit einfach wiederholen', text: 'Nutze eine kurze Video-Wiederholung zum BGB und notiere dabei die Altersgrenzen und die Begriffe Geschäftsunfähigkeit / beschränkte Geschäftsfähigkeit / volle Geschäftsfähigkeit.', source: 'Lernvideo-Suche', url: 'https://www.youtube.com/results?search_query=Gesch%C3%A4ftsf%C3%A4higkeit+einfach+erkl%C3%A4rt' },
+      ]
     },
     {
-      id: 'lagerhaltung',
-      title: 'Lagerhaltung in der Arztpraxis',
-      content: [
-        { type: 'heading', title: 'Ziele der Lagerhaltung' },
-        { type: 'list', items: [
-          'Engpässe vermeiden – es sollte nie etwas fehlen',
-          'Günstige Einkaufspreise durch Mengenrabatte',
-          'Geringe Lagerkosten (Miete, Strom für Kühlschrank)',
-          'Wenig Kapitalbindung – nicht zu viel Geld im Lager',
-        ]},
+      id: 'lagerhaltung', title: '2. Lagerhaltung in der Arztpraxis', content: [
+        { type: 'heading', title: 'Warum braucht eine Praxis überhaupt ein Lager?' },
+        { type: 'text', text: 'Eine Praxis muss jederzeit arbeitsfähig sein. Gleichzeitig dürfen Material und Arzneimittel nicht unnötig lange liegen, ablaufen oder zu viel Kapital binden. Gute Lagerhaltung versucht deshalb, Versorgungssicherheit und Wirtschaftlichkeit miteinander zu verbinden.' },
+        { type: 'image', src: stockCycle, alt: 'Kreislauf der Lagerhaltung', caption: 'Bedarf prüfen → Bestand kennen → bestellen → richtig lagern → verbrauchen → erneut prüfen.' },
         { type: 'heading', title: 'FEFO-Prinzip' },
-        { type: 'info', title: 'First Expired First Out', text: 'Das FEFO-Prinzip bedeutet: Zuerst ablaufende Medikamente zuerst verwenden. Das verhindert, dass Medikamente ablaufen und verschwendet werden.' },
-        { type: 'heading', title: 'Lagerung von Arzneimitteln' },
-        { type: 'list', items: [
-          'Für Patienten unzugänglich aufbewahren (verschlossener Schrank)',
-          'Vor Licht, Feuchtigkeit und Wärme schützen',
-          'Kühlschranktemperatur täglich kontrollieren und dokumentieren',
-          'Nie zusammen mit Lebensmitteln lagern!',
-          'Abgelaufene Medikamente sofort entsorgen',
-        ]},
-        { type: 'warning', title: 'Kühlschranktemperatur', text: 'Die Temperatur im Medikamentenkühlschrank muss zwischen +2°C und +8°C liegen. Jeden Tag messen und aufschreiben!' },
-      ],
+        { type: 'image', src: fefo, alt: 'FEFO Prinzip mit drei Verfallsdaten', caption: 'Nicht die zuletzt gekaufte Packung zuerst nehmen, sondern die Packung mit dem frühesten Verfallsdatum.' },
+        { type: 'definition', term: 'FEFO', definition: 'First Expired – First Out: Was zuerst verfällt, wird zuerst verwendet.' },
+        { type: 'heading', title: 'Arzneimittel lagern' },
+        { type: 'list', items: ['Herstellerangaben zur Lagertemperatur beachten.', 'Kühlpflichtige Präparate in geeigneter Kühlung lagern und Temperaturen dokumentieren.', 'Vor unbefugtem Zugriff schützen.', 'Licht, Feuchtigkeit und Wärme je nach Produkt vermeiden.', 'Verfallsdaten regelmäßig kontrollieren und auffällige Packungen separieren.'] },
+        { type: 'info', title: 'Kühlkette', text: 'Viele kühlpflichtige Arzneimittel werden bei +2 °C bis +8 °C gelagert. Entscheidend ist aber immer die konkrete Fach- bzw. Produktinformation.' },
+        { type: 'warning', title: 'Praxisfall', text: 'Ein Kühlschrank zeigt morgens 11 °C. Nicht einfach „wieder runterkühlen und weiter“. Abweichung dokumentieren, Präparate sichern und nach Praxisvorgabe bzw. Herstellerinformation klären, ob sie weiterverwendbar sind.' },
+      ]
     },
     {
-      id: 'oekologie',
-      title: 'Ökologie in der Arztpraxis',
-      content: [
-        { type: 'heading', title: 'Müllvermeidung' },
-        { type: 'list', items: [
-          'Mehrwegverpackungen bevorzugen statt Einweg',
-          'Doppelseitiges Drucken spart Papier',
-          'E-Mails statt Briefe, wo möglich',
-          'Großpackungen statt vieler kleiner Packungen',
-          'Wiederverwendbare Instrumente statt Einweg, wo hygienisch möglich',
-        ]},
-        { type: 'heading', title: 'Mülltrennung' },
-        { type: 'table', headers: ['Müllart', 'Beispiele', 'Entsorgung'], rows: [
-          ['Restmüll', 'Papier, Verpackungen', 'Schwarze Tonne'],
-          ['Wertstoffe', 'Plastik, Glas, Metall', 'Gelber Sack'],
-          ['Bioabfall', 'Pflanzliche Reste', 'Braune Tonne'],
-          ['Sondermüll', 'Infektiöser Abfall, Chemikalien', 'Spezielle Entsorgung'],
-        ]},
-        { type: 'warning', title: 'Sondermüll', text: 'Sondermüll aus der Arztpraxis (z.B. infektiöser Abfall, auslaufende Medikamente) darf nie im Hausmüll landen! Spezielle Entsorgungsfirmen holen diesen ab.' },
-      ],
+      id: 'oekologie', title: '3. Ökologie und sichere Entsorgung', content: [
+        { type: 'heading', title: 'Ökologisch heißt nicht einfach „alles in eine Tonne“' },
+        { type: 'text', text: 'In einer Arztpraxis muss Entsorgung zwei Ziele gleichzeitig erfüllen: Ressourcen schonen und Menschen vor Verletzung oder Infektion schützen. Deshalb entscheidet zuerst die Gefährdung, danach der Entsorgungsweg.' },
+        { type: 'image', src: waste, alt: 'Abfallgruppen in der Arztpraxis', caption: 'Besonders wichtig: spitze und scharfe Gegenstände gehören in geeignete stich- und bruchfeste Behälter.' },
+        { type: 'list', items: ['Abfall vermeiden, wenn medizinisch und hygienisch sinnvoll.', 'Material korrekt trennen.', 'Kanülen und Lanzetten unmittelbar sicher entsorgen.', 'Besonders gefährliche oder infektiöse Abfälle nach Praxis- und Behördenvorgaben behandeln.', 'Energie und Verbrauchsmaterial bewusst einsetzen.'] },
+        { type: 'warning', title: 'Nicht pauschalisieren', text: 'Die konkrete Abfallzuordnung kann von Abfallart und regionalen Vorgaben abhängen. Im Berufsalltag gelten der Hygieneplan, die Praxisanweisung und die örtlichen Entsorgungsregeln.' },
+      ]
     },
     {
-      id: 'btm',
-      title: 'Betäubungsmittel (BTM)',
-      content: [
-        { type: 'heading', title: 'Was sind Betäubungsmittel?' },
-        { type: 'text', text: 'Betäubungsmittel sind besonders gefährliche Medikamente, die unter das Betäubungsmittelgesetz (BtMG) fallen. Sie werden auch "Suchtmittel" genannt, weil sie abhängig machen können.' },
-        { type: 'heading', title: 'Besonderheiten bei BTM' },
-        { type: 'list', items: [
-          'BTM-Rezepte haben besondere Form (gelbes oder rotes Rezept)',
-          'Nur 7 Tage gültig (von Ausstellung beim Arzt)',
-          'Maximal Verschreibung für 30 Tage (bei chronischen Schmerzen bis 90 Tage)',
-          'Müssen in verschlossenem BTM-Schrank aufbewahrt werden',
-          'Doppelte Buchführung: BTM-Buch und Kassabuch',
-          'Bei jeder Abgabe muss der Empfänger sich ausweisen',
-        ]},
-        { type: 'warning', title: 'Wichtig!', text: 'BTM-Rezepte dürfen nie kopiert oder gefälscht werden. Das ist strafbar! Bei Verlust sofort den Arzt informieren.' },
-        { type: 'heading', title: 'Medizinproduktegesetz (MPG)' },
-        { type: 'text', text: 'Das Medizinproduktegesetz regelt den Umgang mit Medizinprodukten wie Spritzen, Kanülen, Verbandsstoffe und Geräte wie EKG-Geräte.' },
-        { type: 'info', title: 'Medizinproduktebuch', text: 'Darin wird dokumentiert: Wann wurde das Produkt gekauft? Wo wurde es gekauft? Wann wurde es verwendet? Wer hat es verwendet?' },
-      ],
+      id: 'btm-medizinprodukte', title: '4. Betäubungsmittel und Medizinprodukte', content: [
+        { type: 'heading', title: 'Warum sind BtM besonders geregelt?' },
+        { type: 'text', text: 'Bestimmte Betäubungsmittel unterliegen besonders strengen Regeln, weil Missbrauch, Abhängigkeit und Fehlanwendung erhebliche Risiken haben können. Deshalb werden Verschreibung, Formulare, Aufbewahrung und Dokumentation besonders kontrolliert.' },
+        { type: 'image', src: btmFlow, alt: 'Ablauf eines BtM-Rezeptes', caption: 'Der genaue Inhalt des Rezepts wird ärztlich verantwortet; die MFA muss die organisatorischen Sicherheitsregeln der Praxis kennen.' },
+        { type: 'info', title: '7-Tage-Regel', text: 'Nach den aktuellen Informationen des BfArM dürfen Betäubungsmittel auf eine Verschreibung nur abgegeben werden, wenn das BtM-Rezept bei Vorlage vor nicht mehr als sieben Tagen ausgefertigt wurde.' },
+        { type: 'warning', title: 'Sicherer Umgang', text: 'BtM-Rezeptformulare sind personenbezogen für Ärztinnen und Ärzte vorgesehen. Unbenutzte Formulare und BtM-Bestände müssen nach den geltenden Vorgaben vor unbefugtem Zugriff geschützt werden.' },
+        { type: 'video', title: 'Offizielle Vertiefung: BtM-Rezepte', text: 'Keine Unterhaltung, sondern die offizielle BfArM-Informationsseite. Lies nach dem Abschnitt die 7-Tage-Regel und die personengebundene Ausgabe der Formulare nach.', source: 'BfArM', url: 'https://www.bfarm.de/DE/Bundesopiumstelle/Betaeubungsmittel/BtM-Rezepte-Verschreibung/_artikel.html' },
+        { type: 'heading', title: 'Medizinprodukte – aktueller Rechtsrahmen' },
+        { type: 'text', text: 'In älteren Lernunterlagen taucht häufig noch der Begriff „Medizinproduktegesetz (MPG)“ auf. Heute ist für Deutschland unter anderem das Medizinprodukterecht-Durchführungsgesetz (MPDG) zusammen mit den europäischen Medizinprodukteverordnungen maßgeblich.' },
+        { type: 'info', title: 'Für die MFA wichtig', text: 'Medizinprodukte dürfen nicht betrieben oder angewendet werden, wenn Mängel vorliegen, durch die Patienten, Beschäftigte oder Dritte gefährdet werden können. Geräteeinweisung, Wartung, Aufbereitung und Dokumentation richten sich nach Produkt und geltenden Vorgaben.' },
+      ]
     },
     {
-      id: 'zahlungsverkehr',
-      title: 'Kaufvertrag und Zahlungsverkehr',
-      content: [
-        { type: 'heading', title: 'Der Kaufvertrag' },
-        { type: 'text', text: 'Ein Kaufvertrag kommt zustande, wenn sich Käufer und Verkäufer über Ware und Preis einig sind.' },
-        { type: 'heading', title: 'Kaufvertragsstörungen' },
-        { type: 'table', headers: ['Störung', 'Was passiert?', 'Rechte des Käufers'], rows: [
-          ['Mangelhafte Lieferung', 'Ware hat Fehler (Sachmangel)', 'Nachbesserung, Minderung, Rückgabe'],
-          ['Lieferungsverzug', 'Ware kommt zu spät', 'Schadensersatz, Verzugszinsen'],
-          ['Zahlungsverzug', 'Käufer zahlt zu spät', 'Verzugszinsen müssen gezahlt werden'],
-        ]},
-        { type: 'heading', title: 'Zahlungsarten' },
-        { type: 'table', headers: ['Zahlungsart', 'Beschreibung'], rows: [
-          ['Überweisung', 'Geld wird vom Konto des Zahlers auf ein anderes Konto übertragen'],
-          ['Dauerauftrag', 'Regelmäßige Überweisung zum gleichen Termin'],
-          ['Lastschrift', 'Der Empfänger holt sich das Geld vom Konto des Zahlers'],
-          ['EC-Karte', 'Zahlung mit Girocard am Terminal (PIN-Eingabe nötig)'],
-          ['Kreditkarte', 'Zahlung mit Kreditkarte (Unterschrift oder PIN)'],
-        ]},
-        { type: 'heading', title: 'Verzugszinsen berechnen' },
-        { type: 'info', title: 'Formel', text: 'Zinsen = Kapital × Zinssatz × Tage / (100 × 360). Für Privatpersonen gilt: 1 Jahr = 360 Tage, 1 Monat = 30 Tage.' },
-        { type: 'text', text: 'Beispiel: Eine Rechnung über 500 € wird 10 Tage zu spät gezahlt. Zinssatz: 5%. Zinsen = 500 × 5 × 10 / (100 × 360) = 0,69 €' },
-      ],
+      id: 'kaufvertrag', title: '5. Kaufvertrag und Störungen', content: [
+        { type: 'heading', title: 'Wann entsteht ein Kaufvertrag?' },
+        { type: 'text', text: 'Vereinfacht entsteht ein Vertrag durch zwei inhaltlich passende Willenserklärungen: Angebot und Annahme. In der Praxis kann das beim Bestellen von Material relevant sein.' },
+        { type: 'table', headers: ['Störung', 'Einfach erklärt', 'Beispiel'], rows: [['Sachmangel','Ware entspricht nicht der vereinbarten Beschaffenheit','bestellte Handschuhe sind beschädigt'],['Lieferungsverzug','Lieferung erfolgt trotz Fälligkeit und Voraussetzungen zu spät','Material kommt nicht zum vereinbarten Termin'],['Zahlungsverzug','fällige Zahlung erfolgt trotz Voraussetzungen nicht rechtzeitig','Praxis zahlt Rechnung verspätet']] },
+        { type: 'info', title: 'Denkregel', text: 'Bei jedem Fall zuerst fragen: Wer schuldet was? Wann war es fällig? Was ist tatsächlich passiert? Erst dann über Rechte und Folgen sprechen.' },
+      ]
+    },
+    {
+      id: 'zahlungsverkehr', title: '6. Zahlungsverkehr und Verzugszinsen', content: [
+        { type: 'image', src: payment, alt: 'Vergleich verschiedener Zahlungsarten', caption: 'Merke besonders den Unterschied: Überweisung/Dauerauftrag wird vom Zahler ausgelöst, Lastschrift vom Zahlungsempfänger auf Basis eines Mandats.' },
+        { type: 'table', headers: ['Zahlungsart','Wer stößt sie an?','Typischer Einsatz'], rows: [['Überweisung','Zahler','einmalige Rechnung'],['Dauerauftrag','Zahler','regelmäßig gleicher Betrag'],['Lastschrift','Empfänger mit Mandat','variable oder regelmäßige Forderungen'],['Kartenzahlung','Zahler am Terminal','direkte Zahlung vor Ort']] },
+        { type: 'heading', title: 'Zinsen Schritt für Schritt' },
+        { type: 'text', text: 'In Schulaufgaben wird häufig mit einer kaufmännischen Zinsformel gearbeitet: Zinsen = Kapital × Zinssatz × Tage / (100 × 360). Wichtig: Verwende die Formel nur, wenn sie in der Aufgabe bzw. im Lernstoff so vorgegeben ist.' },
+        { type: 'info', title: 'Beispiel', text: '500 € × 5 × 10 / (100 × 360) = 0,69 €. Schreibe im Test immer Formel, eingesetzte Werte, Rechenweg und Ergebnis mit Einheit auf.' },
+      ]
+    },
+    {
+      id: 'praxisfaelle', title: '7. Große Praxisfälle', content: [
+        { type: 'heading', title: 'Fall 1 – Lagerproblem' },
+        { type: 'text', text: 'Im Medikamentenschrank stehen drei Packungen desselben Präparats mit Ablauf 09/2026, 02/2027 und 11/2027. Welche kommt nach vorne und warum? Was kontrollierst du zusätzlich?' },
+        { type: 'heading', title: 'Fall 2 – BtM-Rezept' },
+        { type: 'text', text: 'Ein Patient legt ein BtM-Rezept vor, das deutlich älter als eine Woche ist. Was ist dein nächster organisatorischer Schritt? Begründe mit der Frist und vermeide eigenmächtige medizinische Entscheidungen.' },
+        { type: 'heading', title: 'Fall 3 – Bestellung' },
+        { type: 'text', text: 'Die Praxis bestellt Untersuchungsmaterial, erhält aber eine beschädigte Lieferung. Ordne die Situation einem Begriff zu und erkläre, welche Informationen für die weitere Bearbeitung dokumentiert werden sollten.' },
+      ]
     },
   ],
   questions: [
-    {
-      id: 1,
-      question: 'Was bedeutet das FEFO-Prinzip?',
-      type: 'single',
-      options: [
-        { id: 'a', text: 'First In First Out – zuerst eingegangene Medikamente zuerst verwenden' },
-        { id: 'b', text: 'First Expired First Out – zuerst ablaufende Medikamente zuerst verwenden', correct: true },
-        { id: 'c', text: 'Fast Expired Fast Out – abgelaufene Medikamente schnell entsorgen' },
-        { id: 'd', text: 'Final Expired Final Out – alle abgelaufenen Medikammen auf einmal entsorgen' },
-      ],
-      explanation: 'FEFO = First Expired First Out. Das bedeutet: Zuerst ablaufende Medikamente zuerst verwenden, um Ablauf zu vermeiden.',
-      points: 2,
-    },
-    {
-      id: 2,
-      question: 'Welche Temperatur muss im Medikamentenkühlschrank herrschen?',
-      type: 'single',
-      options: [
-        { id: 'a', text: '0°C bis +2°C' },
-        { id: 'b', text: '+2°C bis +8°C', correct: true },
-        { id: 'c', text: '+8°C bis +12°C' },
-        { id: 'd', text: '-2°C bis 0°C' },
-      ],
-      explanation: 'Die Temperatur im Medikamentenkühlschrank muss zwischen +2°C und +8°C liegen. Jeden Tag messen und aufschreiben!',
-      points: 2,
-    },
-    {
-      id: 3,
-      question: 'Wie lange ist ein BTM-Rezept gültig?',
-      type: 'single',
-      options: [
-        { id: 'a', text: '3 Tage' },
-        { id: 'b', text: '7 Tage', correct: true },
-        { id: 'c', text: '14 Tage' },
-        { id: 'd', text: '30 Tage' },
-      ],
-      explanation: 'BTM-Rezepte sind nur 7 Tage gültig (von der Ausstellung beim Arzt an gerechnet).',
-      points: 2,
-    },
-    {
-      id: 4,
-      question: 'Was bedeutet "Geschäftsfähigkeit"?',
-      type: 'single',
-      options: [
-        { id: 'a', text: 'Die Fähigkeit, Rechte und Pflichten zu haben' },
-        { id: 'b', text: 'Die Fähigkeit, gültige Rechtsgeschäfte zu tätigen', correct: true },
-        { id: 'c', text: 'Die Fähigkeit, Verträge zu lesen' },
-        { id: 'd', text: 'Die Fähigkeit, im Geschäft zu arbeiten' },
-      ],
-      explanation: 'Geschäftsfähigkeit = Die Fähigkeit, gültige Rechtsgeschäfte zu tätigen. Rechtsfähigkeit = Fähigkeit, Rechte und Pflichten zu haben (ab Geburt).',
-      points: 2,
-    },
-    {
-      id: 5,
-      question: 'Ab welchem Alter ist man voll geschäftsfähig?',
-      type: 'single',
-      options: [
-        { id: 'a', text: '16 Jahre' },
-        { id: 'b', text: '18 Jahre', correct: true },
-        { id: 'c', text: '21 Jahre' },
-        { id: 'd', text: '14 Jahre' },
-      ],
-      explanation: 'Ab 18 Jahren ist man voll geschäftsfähig und kann alle Rechtsgeschäfte selbstständig tätigen.',
-      points: 2,
-    },
-    {
-      id: 6,
-      question: 'In welche Tonne gehört Sondermüll aus der Arztpraxis?',
-      type: 'single',
-      options: [
-        { id: 'a', text: 'Schwarze Tonne (Restmüll)' },
-        { id: 'b', text: 'Gelber Sack (Wertstoffe)' },
-        { id: 'c', text: 'Spezielle Entsorgung', correct: true },
-        { id: 'd', text: 'Blaue Tonne (Papier)' },
-      ],
-      explanation: 'Sondermüll aus der Arztpraxis (infektiöser Abfall, Chemikalien, auslaufende Medikamente) gehört in die spezielle Entsorgung – niemals in den Hausmüll!',
-      points: 2,
-    },
-    {
-      id: 7,
-      question: 'Nenne zwei Möglichkeiten, wie du in der Praxis Müll vermeiden kannst.',
-      type: 'text',
-      correctAnswer: 'mehrweg,doppelseitig,emails,großpackungen,wiederverwendbar',
-      explanation: 'Möglichkeiten: Mehrwegverpackungen bevorzugen, doppelseitiges Drucken, E-Mails statt Briefe, Großpackungen, wiederverwendbare Instrumente.',
-      points: 2,
-    },
-    {
-      id: 8,
-      question: 'Was ist eine Lastschrift?',
-      type: 'single',
-      options: [
-        { id: 'a', text: 'Eine regelmäßige Überweisung' },
-        { id: 'b', text: 'Der Empfänger holt sich das Geld vom Konto des Zahlers', correct: true },
-        { id: 'c', text: 'Eine Bareinzahlung' },
-        { id: 'd', text: 'Eine Zahlung mit Kreditkarte' },
-      ],
-      explanation: 'Bei einer Lastschrift holt sich der Empfänger (z.B. die Arztpraxis) das Geld vom Konto des Zahlers (Patient). Der Zahler muss eine Einzugsermächtigung geben.',
-      points: 2,
-    },
-    {
-      id: 9,
-      question: 'Berechne die Verzugszinsen: Eine Rechnung über 800 € wird 15 Tage zu spät gezahlt. Zinssatz: 5%.',
-      type: 'single',
-      options: [
-        { id: 'a', text: '1,67 €' },
-        { id: 'b', text: '2,00 €', correct: false },
-        { id: 'c', text: '1,33 €' },
-        { id: 'd', text: '0,80 €' },
-      ],
-      explanation: 'Zinsen = 800 × 5 × 15 / (100 × 360) = 60.000 / 36.000 = 1,67 €. Formel: Zinsen = Kapital × Zinssatz × Tage / (100 × 360)',
-      points: 3,
-    },
-    {
-      id: 10,
-      question: 'Welche Rechte hat der Käufer bei einer mangelhaften Lieferung?',
-      type: 'multiple',
-      options: [
-        { id: 'a', text: 'Nachbesserung', correct: true },
-        { id: 'b', text: 'Minderung', correct: true },
-        { id: 'c', text: 'Rückgabe', correct: true },
-        { id: 'd', text: 'Schadensersatz', correct: false },
-      ],
-      explanation: 'Bei mangelhafter Lieferung hat der Käufer Recht auf Nachbesserung (Mangel beheben), Minderung (Preisminderung) oder Rückgabe. Schadensersatz gilt bei Lieferverzug.',
-      points: 3,
-    },
-    {
-      id: 11,
-      question: 'Was muss bei der Aufbewahrung von BTM beachtet werden?',
-      type: 'text',
-      correctAnswer: 'btm-schrank,verschlossen,buchführung,ausweis',
-      explanation: 'BTM müssen in einem verschlossenen BTM-Schrank aufbewahrt werden. Es muss eine doppelte Buchführung (BTM-Buch und Kassabuch) geführt werden. Bei jeder Abgabe muss sich der Empfänger ausweisen.',
-      points: 3,
-    },
-    {
-      id: 12,
-      question: 'Was ist ein Medizinproduktebuch und wozu dient es?',
-      type: 'text',
-      correctAnswer: 'dokumentation,kauf,verwendung,datum,lieferant,mfa',
-      explanation: 'Das Medizinproduktebuch dient zur Dokumentation von Medizinprodukten. Darin wird erfasst: Wann wurde das Produkt gekauft? Wo (Lieferant)? Wann wurde es verwendet? Wer hat es verwendet?',
-      points: 3,
-    },
+    {id:1,question:'Was bedeutet Rechtsfähigkeit?',type:'single',options:[{id:'a',text:'Fähigkeit, Rechte und Pflichten zu haben',correct:true},{id:'b',text:'Fähigkeit, jede Rechnung zu bezahlen'},{id:'c',text:'Fähigkeit, nur Arbeitsverträge abzuschließen'},{id:'d',text:'Fähigkeit, medizinische Diagnosen zu stellen'}],explanation:'Rechtsfähigkeit bedeutet, Träger von Rechten und Pflichten sein zu können.',points:2},
+    {id:2,question:'Welche Altersgruppe ist grundsätzlich beschränkt geschäftsfähig?',type:'single',options:[{id:'a',text:'0–6'},{id:'b',text:'7–17',correct:true},{id:'c',text:'18–20'},{id:'d',text:'ab 21'}],explanation:'Vom vollendeten 7. bis vor dem 18. Lebensjahr besteht grundsätzlich beschränkte Geschäftsfähigkeit.',points:2},
+    {id:3,question:'Was bedeutet FEFO?',type:'single',options:[{id:'a',text:'First Expired – First Out',correct:true},{id:'b',text:'First Entered – First Ordered'},{id:'c',text:'Fast Expired – Fast Open'},{id:'d',text:'First Empty – First Out'}],explanation:'Das früheste Verfallsdatum wird zuerst berücksichtigt.',points:2},
+    {id:4,question:'Welche Packung wird nach FEFO zuerst verwendet?',type:'single',options:[{id:'a',text:'Ablauf 11/2027'},{id:'b',text:'Ablauf 09/2026',correct:true},{id:'c',text:'die zuletzt gelieferte'},{id:'d',text:'immer die größte Packung'}],explanation:'Die Packung mit dem frühesten Verfallsdatum kommt zuerst.',points:2},
+    {id:5,question:'Was ist bei einer dokumentierten Kühlschrankabweichung sinnvoll?',type:'multiple',options:[{id:'a',text:'Abweichung dokumentieren',correct:true},{id:'b',text:'betroffene Präparate sichern',correct:true},{id:'c',text:'nach Vorgaben/Herstellerinformation klären',correct:true},{id:'d',text:'Messwert löschen'}],explanation:'Temperaturabweichungen müssen nachvollziehbar bearbeitet werden.',points:3},
+    {id:6,question:'Wie entsorgt man gebrauchte Kanülen grundsätzlich?',type:'single',options:[{id:'a',text:'lose im Papierkorb'},{id:'b',text:'in einem geeigneten stich- und bruchfesten Behälter',correct:true},{id:'c',text:'in der Hosentasche'},{id:'d',text:'im Papiermüll'}],explanation:'Spitze/scharfe Gegenstände müssen verletzungssicher gesammelt werden.',points:2},
+    {id:7,question:'Welche Aussage zur BtM-Verschreibung ist richtig?',type:'single',options:[{id:'a',text:'Bei Vorlage darf sie beliebig alt sein'},{id:'b',text:'Für die Abgabe darf sie bei Vorlage nicht vor mehr als sieben Tagen ausgefertigt worden sein',correct:true},{id:'c',text:'BtM-Rezepte sind normale Notizzettel'},{id:'d',text:'Die MFA stellt sie eigenständig aus'}],explanation:'Das BfArM nennt die 7-Tage-Regel für die Abgabe.',points:3},
+    {id:8,question:'Was ist heute ein zentraler deutscher Rechtsrahmen für Medizinprodukte?',type:'single',options:[{id:'a',text:'nur das frühere MPG'},{id:'b',text:'MPDG zusammen mit EU-Medizinprodukterecht',correct:true},{id:'c',text:'Straßenverkehrsordnung'},{id:'d',text:'GOÄ'}],explanation:'Das MPDG führt und ergänzt europäisches Medizinprodukterecht in Deutschland.',points:2},
+    {id:9,question:'Wie kommt ein Vertrag vereinfacht zustande?',type:'single',options:[{id:'a',text:'durch Angebot und Annahme',correct:true},{id:'b',text:'nur durch Bargeld'},{id:'c',text:'nur durch Notar'},{id:'d',text:'durch Schweigen in jedem Fall'}],explanation:'Zwei übereinstimmende Willenserklärungen – Angebot und Annahme – bilden den Grundmechanismus.',points:2},
+    {id:10,question:'Eine Ware ist beschädigt. Welcher Begriff passt am besten?',type:'single',options:[{id:'a',text:'Sachmangel',correct:true},{id:'b',text:'Dauerauftrag'},{id:'c',text:'Rechtsfähigkeit'},{id:'d',text:'FEFO'}],explanation:'Eine beschädigte bzw. nicht vereinbarungsgemäße Ware kann einen Sachmangel darstellen.',points:2},
+    {id:11,question:'Wer stößt eine normale Überweisung an?',type:'single',options:[{id:'a',text:'der Zahler',correct:true},{id:'b',text:'immer die Bank'},{id:'c',text:'der Zahlungsempfänger ohne Auftrag'},{id:'d',text:'das Finanzamt'}],explanation:'Bei der Überweisung weist der Zahler seine Bank zur Zahlung an.',points:2},
+    {id:12,question:'Wer zieht bei einer Lastschrift das Geld ein?',type:'single',options:[{id:'a',text:'der Empfänger auf Basis eines Mandats',correct:true},{id:'b',text:'immer der Zahler selbst'},{id:'c',text:'der Paketdienst'},{id:'d',text:'die MFA privat'}],explanation:'Die Lastschrift wird vom Zahlungsempfänger ausgelöst, wenn eine entsprechende Berechtigung besteht.',points:2},
+    {id:13,question:'Welche Ziele gehören zu guter Lagerhaltung?',type:'multiple',options:[{id:'a',text:'Versorgung sichern',correct:true},{id:'b',text:'Ablauf vermeiden',correct:true},{id:'c',text:'unnötige Kapitalbindung reduzieren',correct:true},{id:'d',text:'möglichst alles unbegrenzt lagern'}],explanation:'Lagerhaltung balanciert Verfügbarkeit, Sicherheit und Wirtschaftlichkeit.',points:3},
+    {id:14,question:'Erkläre den Unterschied zwischen Rechtsfähigkeit und Geschäftsfähigkeit.',type:'text',correctAnswer:'rechte,pflichten,rechtsgeschäfte',explanation:'Rechtsfähigkeit = Rechte/Pflichten haben; Geschäftsfähigkeit = Rechtsgeschäfte selbst wirksam vornehmen können.',points:4},
+    {id:15,question:'Was bedeutet Zahlungsverzug vereinfacht?',type:'single',options:[{id:'a',text:'Ware ist kaputt'},{id:'b',text:'eine fällige Zahlung erfolgt trotz Voraussetzungen nicht rechtzeitig',correct:true},{id:'c',text:'Lieferung kommt zu früh'},{id:'d',text:'Konto wird eröffnet'}],explanation:'Zahlungsverzug betrifft verspätete Erfüllung einer Geldschuld.',points:2},
+    {id:16,question:'Welche Formel wird in vielen kaufmännischen Schulaufgaben für Tageszinsen verwendet?',type:'single',options:[{id:'a',text:'Kapital × Zinssatz × Tage / (100 × 360)',correct:true},{id:'b',text:'Kapital + Tage × 100'},{id:'c',text:'Zinssatz / Kapital'},{id:'d',text:'Tage × 360 ohne Kapital'}],explanation:'Das ist die häufig verwendete kaufmännische Zinsformel in Schulaufgaben.',points:2},
+    {id:17,question:'Ein Kühlschrank zeigt 11 °C. Welche Reaktion ist am sinnvollsten?',type:'single',options:[{id:'a',text:'ignorieren'},{id:'b',text:'Abweichung dokumentieren, Produkte sichern und Verwendbarkeit klären',correct:true},{id:'c',text:'Etiketten austauschen'},{id:'d',text:'alle Medikamente sofort ohne Prüfung verwenden'}],explanation:'Eine Kühlkettenabweichung muss nachvollziehbar bewertet werden.',points:3},
+    {id:18,question:'Nenne zwei Dinge, die du bei einer beschädigten Materiallieferung dokumentieren würdest.',type:'text',correctAnswer:'artikel,schaden,menge,lieferdatum,lieferant,foto',explanation:'Zum Beispiel Artikel, Menge, Art des Schadens, Lieferdatum, Lieferant und ggf. Foto.',points:3},
   ],
 };
