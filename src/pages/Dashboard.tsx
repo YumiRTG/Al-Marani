@@ -194,18 +194,18 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
                   whileHover={{ y: -7 }}
                   className="group text-left rounded-[28px] overflow-hidden bg-white border border-white shadow-[0_14px_40px_rgba(15,23,42,.07)] hover:shadow-[0_24px_58px_rgba(13,148,136,.14)] transition-shadow"
                 >
-                  <div className="relative h-44 bg-gradient-to-br from-slate-800 to-slate-700 overflow-hidden">
-                    <img src={module.heroImage} alt="" loading="lazy" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
-                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/88 via-slate-900/10 to-transparent" />
-                    <div className={`absolute left-4 top-4 w-11 h-11 rounded-2xl grid place-items-center shadow-lg ${iconTone[module.icon] || 'bg-white text-slate-700'}`}>{iconMap[module.icon] || <BookOpen className="w-6 h-6" />}</div>
-                    {done && <div className="absolute top-4 right-4 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-emerald-600 shadow"><CheckCircle2 className="w-4 h-4" /> Fertig</div>}
-                    <div className="absolute left-5 right-5 bottom-4 text-white">
-                      <div className="text-[10px] uppercase tracking-[.18em] text-white/70 font-bold">Lernfeld {module.number}</div>
-                      <h3 className="text-lg leading-6 font-extrabold line-clamp-2 mt-1">{module.title}</h3>
-                    </div>
+                  <div className="relative h-40 bg-gradient-to-br from-slate-800 to-slate-700 overflow-hidden">
+                    <img src={module.heroImage} alt="" loading="lazy" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-slate-950/5" />
+                    <div className={`absolute left-4 top-4 z-20 w-10 h-10 rounded-2xl grid place-items-center shadow-lg ring-4 ring-white/55 ${iconTone[module.icon] || 'bg-white text-slate-700'}`}>{iconMap[module.icon] || <BookOpen className="w-5 h-5" />}</div>
+                    {done && <div className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-emerald-600 shadow"><CheckCircle2 className="w-4 h-4" /> Fertig</div>}
                   </div>
 
-                  <div className="p-5">
+                  <div className="p-5 pt-4">
+                    <div className="min-h-[76px] border-b border-slate-100 pb-4 mb-4">
+                      <div className="text-[10px] uppercase tracking-[.18em] text-teal-700 font-black">Lernfeld {module.number}</div>
+                      <h3 className="text-lg leading-6 font-extrabold text-slate-900 mt-1.5 line-clamp-3">{module.title}</h3>
+                    </div>
                     <div className="flex items-center gap-2 mb-3">
                       <span className={`text-[11px] font-bold px-2.5 py-1 rounded-full border ${difficulty.className}`}>{difficulty.label}</span>
                       <span className="text-xs text-slate-400">{module.topics.length} Themen</span>
