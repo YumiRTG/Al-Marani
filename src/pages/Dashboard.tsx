@@ -9,6 +9,7 @@ import {
   Briefcase,
   Megaphone,
   Droplets,
+  Stethoscope,
   ChevronRight,
   CheckCircle2,
 } from 'lucide-react';
@@ -20,6 +21,7 @@ const iconMap: Record<string, React.ReactNode> = {
   briefcase: <Briefcase className="w-6 h-6" />,
   megaphone: <Megaphone className="w-6 h-6" />,
   droplets: <Droplets className="w-6 h-6" />,
+  stethoscope: <Stethoscope className="w-6 h-6" />,
 };
 
 const iconBgMap: Record<string, string> = {
@@ -28,6 +30,7 @@ const iconBgMap: Record<string, string> = {
   briefcase: 'bg-[#CCFBF1] text-[#0D9488]',
   megaphone: 'bg-[#E0F2FE] text-[#38BDF8]',
   droplets: 'bg-[#E0F2FE] text-[#0D9488]',
+  stethoscope: 'bg-[#EDE9FE] text-[#7C3AED]',
 };
 
 const difficultyMap: Record<string, { label: string; color: string; bg: string }> = {
@@ -119,7 +122,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
               <BookOpen className="w-6 h-6 text-[#0D9488] shrink-0" />
               <div>
                 <div className="text-sm font-semibold text-[#1A1D2B]">{modules.length} Lernfelder</div>
-                <div className="text-xs text-[#5A6270]">Lernfeld 4 bis 8</div>
+                <div className="text-xs text-[#5A6270]">Lernfeld 4 bis 9</div>
               </div>
             </div>
             <div className="flex items-center gap-3 bg-white px-5 py-4 rounded-xl shadow-sm text-left">
