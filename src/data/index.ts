@@ -12,6 +12,7 @@ import { lf11 } from './lf11';
 import { lf12 } from './lf12';
 import { enhanceLf4 } from './lf4Enhancements';
 import { enhanceLf5 } from './lf5Enhancements';
+import { enhanceDepth } from './depthEnhancements';
 import { addVideoLibrary } from './videoExtras';
 import type { LearningModule, TopicContent } from '@/types';
 
@@ -51,6 +52,7 @@ function withGitHubPagesAssets(module: LearningModule): LearningModule {
 export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12]
   .map(enhanceLf4)
   .map(enhanceLf5)
+  .map(enhanceDepth)
   .map(cleanModule)
   .map(withGitHubPagesAssets)
   .map(addVideoLibrary);
