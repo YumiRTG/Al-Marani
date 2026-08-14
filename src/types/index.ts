@@ -21,7 +21,7 @@ export interface LearningTopic {
 }
 
 export interface TopicContent {
-  type: 'text' | 'info' | 'warning' | 'table' | 'list' | 'definition' | 'heading';
+  type: 'text' | 'info' | 'warning' | 'table' | 'list' | 'definition' | 'heading' | 'image' | 'video';
   text?: string;
   title?: string;
   headers?: string[];
@@ -29,6 +29,13 @@ export interface TopicContent {
   items?: string[];
   term?: string;
   definition?: string;
+  src?: string;
+  alt?: string;
+  caption?: string;
+  url?: string;
+  embedUrl?: string;
+  duration?: string;
+  source?: string;
 }
 
 export interface LearningModule {
