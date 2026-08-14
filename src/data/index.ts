@@ -14,6 +14,9 @@ import { enhanceLf4 } from './lf4Enhancements';
 import { enhanceLf5 } from './lf5Enhancements';
 import { enhanceDepth } from './depthEnhancements';
 import { expandLf4FromPdf } from './lf4PdfExpansion';
+import { expandLf5FromUploads } from './lf5UploadExpansion';
+import { expandLf6FromPdf } from './lf6PdfExpansion';
+import { expandLf7FromPdf } from './lf7PdfExpansion';
 import { ensureLearningCoverage } from './coverageEnhancements';
 import { addVideoLibrary } from './videoExtras';
 import type { LearningModule, TopicContent } from '@/types';
@@ -56,6 +59,9 @@ export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11,
   .map(enhanceLf5)
   .map(enhanceDepth)
   .map(expandLf4FromPdf)
+  .map(expandLf5FromUploads)
+  .map(expandLf6FromPdf)
+  .map(expandLf7FromPdf)
   .map(ensureLearningCoverage)
   .map(cleanModule)
   .map(withGitHubPagesAssets)
