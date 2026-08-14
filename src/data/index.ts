@@ -18,6 +18,7 @@ import { expandLf5FromUploads } from './lf5UploadExpansion';
 import { expandLf6FromPdf } from './lf6PdfExpansion';
 import { expandLf7FromPdf } from './lf7PdfExpansion';
 import { ensureLearningCoverage } from './coverageEnhancements';
+import { makeLearningMoreEngaging } from './engagementEnhancements';
 import { addVideoLibrary } from './videoExtras';
 import type { LearningModule, TopicContent } from '@/types';
 
@@ -48,10 +49,7 @@ function withGitHubPagesAssets(module: LearningModule): LearningModule {
     ? `${import.meta.env.BASE_URL}${module.heroImage.slice(1)}`
     : module.heroImage;
 
-  return {
-    ...module,
-    heroImage,
-  };
+  return { ...module, heroImage };
 }
 
 export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12]
@@ -63,6 +61,7 @@ export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11,
   .map(expandLf6FromPdf)
   .map(expandLf7FromPdf)
   .map(ensureLearningCoverage)
+  .map(makeLearningMoreEngaging)
   .map(cleanModule)
   .map(withGitHubPagesAssets)
   .map(addVideoLibrary);
