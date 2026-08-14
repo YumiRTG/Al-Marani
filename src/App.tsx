@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Dashboard } from '@/pages/Dashboard';
-import { ModuleDetail } from '@/pages/ModuleDetail';
+import { ModuleDetail } from '@/pages/ModuleDetailV2';
 import { modules } from '@/data';
 
 type Page = 'dashboard' | 'module';
