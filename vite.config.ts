@@ -4,8 +4,8 @@ import { defineConfig } from "vite"
 
 // https://vite.dev/config/
 export default defineConfig({
-base: '/Al-Marani/',
-plugins: [react()],
+  base: '/MFA-Ausbildung/',
+  plugins: [react()],
   server: {
     port: 3000,
   },
