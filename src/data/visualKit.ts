@@ -8,15 +8,41 @@ function esc(value: string) {
 }
 
 export function heroVisual(number: number, title: string, subtitle: string) {
+  const accent = palette[(number - 1) % palette.length];
+  const accent2 = palette[(number + 1) % palette.length];
   return svg(`<svg xmlns="http://www.w3.org/2000/svg" width="1400" height="800" viewBox="0 0 1400 800">
-    <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f766e"/><stop offset=".52" stop-color="#0284c7"/><stop offset="1" stop-color="#7c3aed"/></linearGradient></defs>
+    <title>Lernfeld ${number}: ${esc(title)} – ${esc(subtitle)}</title>
+    <defs>
+      <linearGradient id="g" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#0f172a"/><stop offset=".48" stop-color="${accent}"/><stop offset="1" stop-color="${accent2}"/></linearGradient>
+      <linearGradient id="card" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ffffff" stop-opacity=".94"/><stop offset="1" stop-color="#e2e8f0" stop-opacity=".78"/></linearGradient>
+      <filter id="shadow"><feDropShadow dx="0" dy="18" stdDeviation="24" flood-color="#0f172a" flood-opacity=".24"/></filter>
+    </defs>
     <rect width="1400" height="800" rx="48" fill="url(#g)"/>
-    <circle cx="1180" cy="120" r="250" fill="#fff" opacity=".09"/><circle cx="155" cy="715" r="300" fill="#fff" opacity=".07"/>
-    <rect x="100" y="105" width="210" height="76" rx="30" fill="#fff" opacity=".18"/><text x="205" y="155" text-anchor="middle" font-family="Arial" font-size="30" font-weight="700" fill="white">Lernfeld ${number}</text>
-    <text x="100" y="315" font-family="Arial" font-size="64" font-weight="700" fill="white">${esc(title)}</text>
-    <text x="100" y="385" font-family="Arial" font-size="30" fill="#e0f2fe">${esc(subtitle)}</text>
-    <g transform="translate(930 350)"><circle cx="145" cy="145" r="135" fill="#fff" opacity=".16"/><path d="M75 145H215M145 75V215" stroke="white" stroke-width="30" stroke-linecap="round"/><circle cx="145" cy="145" r="58" fill="none" stroke="#ccfbf1" stroke-width="12"/></g>
-    <text x="100" y="690" font-family="Arial" font-size="25" fill="#dbeafe">MFA Lerncampus · Wissen verstehen · anwenden · überprüfen</text>
+    <circle cx="1190" cy="105" r="260" fill="#fff" opacity=".08"/>
+    <circle cx="155" cy="720" r="320" fill="#fff" opacity=".06"/>
+    <circle cx="745" cy="390" r="320" fill="#fff" opacity=".035"/>
+
+    <g filter="url(#shadow)" transform="translate(145 150)">
+      <rect x="0" y="0" width="470" height="500" rx="42" fill="url(#card)"/>
+      <rect x="70" y="62" width="330" height="54" rx="20" fill="#cbd5e1" opacity=".75"/>
+      <rect x="70" y="152" width="225" height="32" rx="14" fill="#94a3b8" opacity=".55"/>
+      <rect x="70" y="212" width="320" height="32" rx="14" fill="#94a3b8" opacity=".45"/>
+      <rect x="70" y="272" width="275" height="32" rx="14" fill="#94a3b8" opacity=".42"/>
+      <rect x="70" y="348" width="145" height="82" rx="25" fill="${accent}" opacity=".9"/>
+      <rect x="242" y="348" width="145" height="82" rx="25" fill="${accent2}" opacity=".82"/>
+      <path d="M112 388h60M142 358v60" stroke="white" stroke-width="16" stroke-linecap="round"/>
+      <path d="M270 392h28l16-30 23 56 18-31h28" stroke="white" stroke-width="10" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+
+    <g transform="translate(735 135)">
+      <circle cx="265" cy="265" r="225" fill="#fff" opacity=".13"/>
+      <circle cx="265" cy="265" r="165" fill="#fff" opacity=".13"/>
+      <path d="M265 125c-77 0-140 62-140 140s63 140 140 140 140-62 140-140-63-140-140-140Z" fill="#ffffff" opacity=".9"/>
+      <path d="M265 170v190M170 265h190" stroke="${accent}" stroke-width="48" stroke-linecap="round"/>
+      <circle cx="265" cy="265" r="62" fill="none" stroke="${accent2}" stroke-width="15" opacity=".9"/>
+      <path d="M72 505c95-75 182-70 248-10 72 66 150 55 230-33" stroke="#fff" stroke-width="18" fill="none" stroke-linecap="round" opacity=".72"/>
+      <circle cx="70" cy="505" r="17" fill="#fff"/><circle cx="550" cy="462" r="17" fill="#fff"/>
+    </g>
   </svg>`);
 }
 
