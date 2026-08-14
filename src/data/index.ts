@@ -3,8 +3,9 @@ import { lf5 } from './lf5';
 import { lf6 } from './lf6';
 import { lf7 } from './lf7';
 import { lf8 } from './lf8';
+import { lf9 } from './lf9';
 import { addVideoLibrary } from './videoExtras';
 
-export const modules = [lf4, lf5, lf6, lf7, lf8].map(addVideoLibrary);
+export const modules = [lf4, lf5, lf6, lf7, lf8, lf9].map(addVideoLibrary);
 
-export { lf4, lf5, lf6, lf7, lf8 };
+export { lf4, lf5, lf6, lf7, lf8, lf9 };
