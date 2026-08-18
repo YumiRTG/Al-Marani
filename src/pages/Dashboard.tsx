@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import {
   ArrowRight,
+  Award,
   BookOpen,
   Bone,
   Brain,
@@ -18,7 +19,7 @@ import {
   Sparkles,
   Stethoscope,
 } from 'lucide-react';
-import type { LearningModule } from '@/types';
+import type { LearningModule, LearningResult } from '@/types';
 
 const iconMap: Record<string, React.ReactNode> = {
   bone: <Bone className="w-6 h-6" />,
@@ -47,14 +48,19 @@ const difficultyMap: Record<string, { label: string; className: string }> = {
 interface DashboardProps {
   modules: LearningModule[];
   moduleProgress: Record<string, number>;
+  moduleResults: Record<string, LearningResult>;
   onOpenModule: (moduleId: string) => void;
 }
 
-export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardProps) {
+export function Dashboard({ modules, moduleProgress, moduleResults, onOpenModule }: DashboardProps) {
   const totalProgress = modules.length
     ? modules.reduce((sum, module) => sum + (moduleProgress[module.id] || 0), 0) / modules.length
     : 0;
   const completed = modules.filter(module => (moduleProgress[module.id] || 0) >= 100).length;
+  const completedResults = modules.map(module => moduleResults[module.id]).filter(Boolean);
+  const averageGrade = completedResults.length
+    ? completedResults.reduce((sum, result) => sum + result.grade, 0) / completedResults.length
+    : null;
   const totalVideos = modules.reduce((sum, module) => sum + module.topics.reduce((s, topic) => s + topic.content.filter(block => block.type === 'video').length, 0), 0);
   const totalImages = modules.reduce((sum, module) => sum + module.topics.reduce((s, topic) => s + topic.content.filter(block => block.type === 'image').length, 0), 0);
   const totalQuestions = modules.reduce((sum, module) => sum + module.questions.length, 0);
@@ -103,7 +109,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
                 <span className="block bg-gradient-to-r from-teal-600 via-sky-600 to-violet-600 bg-clip-text text-transparent">Schritt für Schritt.</span>
               </motion.h1>
               <motion.p initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .12 }} className="mt-5 max-w-2xl text-slate-600 text-base sm:text-lg leading-8">
-                Erklärungen, Schaubilder und Lernvideos führen durch jedes Thema. Nach jedem Abschnitt folgen kurze Übungen. Danach wird der nächste Lernteil freigeschaltet.
+                Kurze Lernteile, zwei Klickfragen direkt danach und eine komplette Lernkontrolle am Ende. Inhalte dürfen übersprungen werden, Note und Punktzahl zeigen anschließend, wie sicher das gesamte Lernfeld sitzt.
               </motion.p>
               <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: .18 }} className="mt-7 flex flex-col sm:flex-row gap-3">
                 {continueModule && (
@@ -153,8 +159,8 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
             {[
               { icon: BookOpen, value: modules.length, title: 'Lernfelder', text: `LF ${firstNumber} bis ${lastNumber}`, className: 'bg-teal-100 text-teal-700' },
               { icon: PlayCircle, value: totalVideos, title: 'Lernvideos', text: 'direkt im Lernstoff', className: 'bg-rose-100 text-rose-700' },
-              { icon: Images, value: totalImages, title: 'Schaubilder', text: 'übersichtlich erklärt', className: 'bg-sky-100 text-sky-700' },
-              { icon: ListChecks, value: totalQuestions, title: 'Quizfragen', text: `${completed} Lernfelder abgeschlossen`, className: 'bg-amber-100 text-amber-700' },
+              { icon: ListChecks, value: totalQuestions, title: 'Lernkontrollfragen', text: `${completedResults.length} benotet`, className: 'bg-violet-100 text-violet-700' },
+              { icon: Award, value: averageGrade ? averageGrade.toFixed(1) : '–', title: 'Notenschnitt', text: completedResults.length ? `${completedResults.length} Ergebnisse` : 'noch kein Ergebnis', className: 'bg-amber-100 text-amber-700' },
             ].map((item, index) => (
               <motion.div key={item.title} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: index * .05 }} whileHover={{ y: -4 }} className="rounded-3xl bg-white/85 backdrop-blur border border-white p-5 shadow-[0_12px_35px_rgba(15,23,42,.05)]">
                 <div className={`w-11 h-11 rounded-2xl grid place-items-center ${item.className}`}><item.icon className="w-5 h-5" /></div>
@@ -171,7 +177,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
             <div>
               <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-bold text-teal-700"><GraduationCap className="w-4 h-4" /> Lernfelder</div>
               <h2 className="text-2xl sm:text-3xl font-black mt-2">Alle Themen der MFA-Ausbildung</h2>
-              <p className="text-sm text-slate-500 mt-2 max-w-2xl">Wähle ein Lernfeld aus. Dein Fortschritt und deine Antworten werden auf diesem Gerät gespeichert.</p>
+              <p className="text-sm text-slate-500 mt-2 max-w-2xl">Fortschritt, Ergebnisse, Punkte und Noten werden auf diesem Gerät gespeichert.</p>
             </div>
             <div className="rounded-2xl px-4 py-2.5 bg-white border border-slate-200 text-xs font-bold text-slate-500">{completed} / {modules.length} abgeschlossen</div>
           </div>
@@ -179,6 +185,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             {modules.map((module, index) => {
               const progress = moduleProgress[module.id] || 0;
+              const result = moduleResults[module.id];
               const done = progress >= 100;
               const difficulty = difficultyMap[module.difficulty];
               const videoCount = module.topics.reduce((sum, topic) => sum + topic.content.filter(block => block.type === 'video').length, 0);
@@ -198,7 +205,7 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
                     <img src={module.heroImage} alt="" loading="lazy" className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-950/35 via-transparent to-slate-950/5" />
                     <div className={`absolute left-4 top-4 z-20 w-10 h-10 rounded-2xl grid place-items-center shadow-lg ring-4 ring-white/55 ${iconTone[module.icon] || 'bg-white text-slate-700'}`}>{iconMap[module.icon] || <BookOpen className="w-5 h-5" />}</div>
-                    {done && <div className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-emerald-600 shadow"><CheckCircle2 className="w-4 h-4" /> Fertig</div>}
+                    {result ? <div className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-violet-700 shadow"><Award className="w-4 h-4" /> Note {result.grade}</div> : done ? <div className="absolute top-4 right-4 z-20 inline-flex items-center gap-1.5 rounded-full bg-white px-3 py-1.5 text-xs font-black text-emerald-600 shadow"><CheckCircle2 className="w-4 h-4" /> Fertig</div> : null}
                   </div>
 
                   <div className="p-5 pt-4">
@@ -214,8 +221,9 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
                     <div className="mt-4 flex flex-wrap gap-2">
                       <span className="inline-flex items-center gap-1.5 rounded-lg bg-rose-50 text-rose-700 px-2.5 py-1.5 text-[11px] font-bold"><PlayCircle className="w-3.5 h-3.5" /> {videoCount} Videos</span>
                       <span className="inline-flex items-center gap-1.5 rounded-lg bg-sky-50 text-sky-700 px-2.5 py-1.5 text-[11px] font-bold"><Images className="w-3.5 h-3.5" /> {imageCount} Bilder</span>
-                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 text-amber-700 px-2.5 py-1.5 text-[11px] font-bold"><Brain className="w-3.5 h-3.5" /> {module.questions.length} Quizfragen</span>
+                      <span className="inline-flex items-center gap-1.5 rounded-lg bg-amber-50 text-amber-700 px-2.5 py-1.5 text-[11px] font-bold"><Brain className="w-3.5 h-3.5" /> {module.questions.length} Kontrollfragen</span>
                     </div>
+                    {result && <div className="mt-4 rounded-2xl border border-violet-200 bg-gradient-to-r from-violet-50 to-teal-50 px-4 py-3"><div className="flex items-center justify-between gap-3"><div><div className="text-[10px] uppercase tracking-[.13em] font-black text-violet-600">Lernkontrolle</div><div className="text-sm font-black text-slate-800 mt-0.5">{result.score} / {result.total} Punkte · {result.percentage}%</div></div><div className="w-12 h-12 rounded-2xl bg-violet-600 text-white grid place-items-center font-black text-xl shadow-md">{result.grade}</div></div></div>}
                     <div className="mt-5 flex items-center gap-3">
                       <div className="flex-1">
                         <div className="flex items-center justify-between text-[11px] font-bold text-slate-400 mb-1.5"><span>Fortschritt</span><span>{Math.round(progress)}%</span></div>
@@ -236,8 +244,8 @@ export function Dashboard({ modules, moduleProgress, onOpenModule }: DashboardPr
             <div className="relative flex flex-col md:flex-row md:items-center gap-6 justify-between">
               <div>
                 <div className="text-xs uppercase tracking-[.16em] font-bold text-teal-100">Lernweg</div>
-                <h2 className="text-2xl font-black mt-2">Ein Thema nach dem anderen.</h2>
-                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">Bearbeite zuerst den Lernabschnitt und anschließend die zugehörigen Übungen. Danach geht es mit dem nächsten Abschnitt weiter. Am Ende wartet der Abschlusstest.</p>
+                <h2 className="text-2xl font-black mt-2">Lernen, überspringen, Wissen beweisen.</h2>
+                <p className="mt-2 max-w-2xl text-sm leading-6 text-white/80">Jeder Lernteil kann bearbeitet oder übersprungen werden. Nach allen Inhalten folgt die umfassende Lernkontrolle über das gesamte Lernfeld. Danach erhältst du Punkte, Prozentwert und eine Note.</p>
               </div>
               {continueModule && <button onClick={() => onOpenModule(continueModule.id)} className="shrink-0 inline-flex items-center justify-center gap-2 rounded-2xl bg-white text-teal-700 px-5 py-3.5 text-sm font-black shadow-xl hover:-translate-y-0.5 transition-transform">Weiterlernen <ArrowRight className="w-4 h-4" /></button>}
             </div>
