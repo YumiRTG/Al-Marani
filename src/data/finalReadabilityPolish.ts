@@ -1,28 +1,29 @@
 import type { LearningModule, LearningTopic, TopicContent } from '@/types';
 
-const topicTitleOverrides: Record<string, string> = {
-  // LF4
-  'anamnese-basics': '1. Anamnese – Beschwerden systematisch erfassen',
-  'symptome-untersuchung': '2. Symptome und körperliche Untersuchung',
-  'gelenke-arthrose': '3. Gelenke, Bewegungsapparat und Arthrose',
-  'knochen-frakturen': '4. Knochenaufbau und Frakturen',
-  'anatomie-wirbelsaeule': '5. Anatomische Richtungsbegriffe und Wirbelsäule',
-  'arzneimittel-basics': '6. Arzneimittel – Grundlagen und sichere Anwendung',
-  'injektionen-sicherheit': '7. Injektionen und Medikamentensicherheit',
-
-  // LF5
-  'herz-basics': '1. Herz – Aufbau und Blutfluss verstehen',
-  'atemwege-basics': '3. Atemwege – von Nase bis Alveolen',
-  'goae-basics': '5. GOÄ – Grundlagen der Privatabrechnung',
-
-  // LF6
-  'praxisfaelle': '7. Praxisfälle zum Anwenden',
-
-  // LF8
-  'harnsystem': '1. Harnsystem – Aufbau und Weg des Urins',
-
-  // LF9 is refined by dedicated transformations; only the appended media library is handled here.
-  'video-mediathek': '🎬 Video-Mediathek Lernfeld 9',
+const topicTitleOverrides: Record<string, Record<string, string>> = {
+  lf4: {
+    'anamnese-basics': '1. Anamnese – Beschwerden systematisch erfassen',
+    'symptome-untersuchung': '2. Symptome und körperliche Untersuchung',
+    'gelenke-arthrose': '3. Gelenke, Bewegungsapparat und Arthrose',
+    'knochen-frakturen': '4. Knochenaufbau und Frakturen',
+    'anatomie-wirbelsaeule': '5. Anatomische Richtungsbegriffe und Wirbelsäule',
+    'arzneimittel-basics': '6. Arzneimittel – Grundlagen und sichere Anwendung',
+    'injektionen-sicherheit': '7. Injektionen und Medikamentensicherheit',
+  },
+  lf5: {
+    'herz-basics': '1. Herz – Aufbau und Blutfluss verstehen',
+    'atemwege-basics': '3. Atemwege – von Nase bis Alveolen',
+    'goae-basics': '5. GOÄ – Grundlagen der Privatabrechnung',
+  },
+  lf6: {
+    'praxisfaelle': '7. Praxisfälle zum Anwenden',
+  },
+  lf8: {
+    'harnsystem': '1. Harnsystem – Aufbau und Weg des Urins',
+  },
+  lf9: {
+    'video-mediathek': '🎬 Video-Mediathek Lernfeld 9',
+  },
 };
 
 const moduleCopyOverrides: Record<string, Partial<Pick<LearningModule, 'title' | 'subtitle' | 'description'>>> = {
@@ -68,13 +69,12 @@ function cleanWording(value?: string) {
     .replace(/\baus der Lernunterlage\b/gi, 'aus dem Lerninhalt')
     .replace(/\bin der Unterlage\b/gi, 'im Lerninhalt')
     .replace(/\baus der Unterlage\b/gi, 'aus dem Lerninhalt')
-    .replace(/\bder Lernunterlage\b/gi, 'dem Lerninhalt')
-    .replace(/\bder Unterlage\b/gi, 'dem Lerninhalt')
-    .replace(/\bdie Lernunterlage\b/gi, 'der Lerninhalt')
-    .replace(/\bdie Unterlage\b/gi, 'der Lerninhalt')
+    .replace(/\bDie Lernunterlage\b/g, 'Der Lerninhalt')
+    .replace(/\bDie Unterlage\b/g, 'Der Lerninhalt')
+    .replace(/\bder Lernunterlage\b/gi, 'des Lerninhalts')
+    .replace(/\bder Unterlage\b/gi, 'des Lerninhalts')
     .replace(/\bLernunterlage\b/gi, 'Lerninhalt')
     .replace(/\bUnterlagenwert\b/gi, 'Lernwert')
-    .replace(/\bUnterlage\b/gi, 'Lerninhalt')
     .replace(/\s+([,.!?;:])/g, '$1')
     .replace(/\s{2,}/g, ' ')
     .trim();
@@ -139,7 +139,7 @@ function splitLongText(block: TopicContent): TopicContent[] {
   ];
 }
 
-function polishTopic(topic: LearningTopic): LearningTopic {
+function polishTopic(moduleId: string, topic: LearningTopic): LearningTopic {
   const content = topic.content
     .map(polishBlock)
     .filter((block): block is TopicContent => Boolean(block))
@@ -147,7 +147,7 @@ function polishTopic(topic: LearningTopic): LearningTopic {
 
   return {
     ...topic,
-    title: topicTitleOverrides[topic.id] || cleanTitle(topic.title) || topic.title,
+    title: topicTitleOverrides[moduleId]?.[topic.id] || cleanTitle(topic.title) || topic.title,
     content,
   };
 }
@@ -161,7 +161,7 @@ export function finalReadabilityPolish(module: LearningModule): LearningModule {
     title: cleanTitle(copy.title || module.title) || module.title,
     subtitle: cleanWording(copy.subtitle || module.subtitle) || module.subtitle,
     description: cleanWording(copy.description || module.description) || module.description,
-    topics: module.topics.map(polishTopic),
+    topics: module.topics.map(topic => polishTopic(module.id, topic)),
     questions: module.questions.map(question => ({
       ...question,
       question: cleanWording(question.question) || question.question,
