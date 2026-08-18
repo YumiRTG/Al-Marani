@@ -1,0 +1,53 @@
+name: Integrate learning reward games
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/patch-learning-rewards.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Patch learning flow
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/pages/ModuleDetailV4.tsx')
+          text = path.read_text()
+          old_import = "import { MiniCrossword } from '@/components/MiniCrossword';"
+          new_import = old_import + "\nimport { LearningRewardGame } from '@/components/LearningRewardGame';"
+          if "LearningRewardGame" not in text:
+              if old_import not in text:
+                  raise SystemExit('MiniCrossword import not found')
+              text = text.replace(old_import, new_import, 1)
+          target = "{activeIndex === allSteps.length - 1 && <MiniCrossword module={module} />}"
+          reward = "{stepComplete && activeStep.stepIndex === (topicSteps[activeStep.topicIndex]?.length || 0) - 1 && <LearningRewardGame moduleId={module.id} topicId={activeTopic.id} />}\n                  " + target
+          if "<LearningRewardGame moduleId={module.id}" not in text:
+              if target not in text:
+                  raise SystemExit('MiniCrossword render target not found')
+              text = text.replace(target, reward, 1)
+          path.write_text(text)
+          PY
+      - name: Build
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+          npm run build
+      - name: Commit patch and clean workflow
+        run: |
+          rm .github/workflows/patch-learning-rewards.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/ModuleDetailV4.tsx .github/workflows/patch-learning-rewards.yml
+          git commit -m "Show optional reward games after selected topics"
+          git push
