@@ -20,6 +20,7 @@ import { expandLf7FromPdf } from './lf7PdfExpansion';
 import { ensureLearningCoverage } from './coverageEnhancements';
 import { makeLearningMoreEngaging } from './engagementEnhancements';
 import { refineLf9 } from './lf9Refinement';
+import { finalPolishLf9 } from './lf9FinalPolish';
 import { addVideoLibrary } from './videoExtras';
 import type { LearningModule, TopicContent } from '@/types';
 
@@ -64,6 +65,7 @@ export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11,
   .map(ensureLearningCoverage)
   .map(makeLearningMoreEngaging)
   .map(refineLf9)
+  .map(finalPolishLf9)
   .map(cleanModule)
   .map(withGitHubPagesAssets)
   .map(addVideoLibrary);
