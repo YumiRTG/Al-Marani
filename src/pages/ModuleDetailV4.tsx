@@ -24,6 +24,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import { MiniCrossword } from '@/components/MiniCrossword';
+import { LearningRewardGame } from '@/components/LearningRewardGame';
 import type { LearningModule, LearningResult, LearningTopic, QuizOption, QuizQuestion, TopicContent } from '@/types';
 
 interface ModuleDetailProps {
@@ -520,6 +521,7 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
                   </section>
 
                   {activeStep.challenge && <details className="mt-5 rounded-2xl border border-violet-200 bg-violet-50 p-4 sm:p-5"><summary className="cursor-pointer font-bold text-violet-700 flex items-center gap-2"><Sparkles className="w-4 h-4" /> Optionale Praxis-Challenge</summary><p className="text-sm text-slate-600 leading-6 mt-3">{activeStep.challenge}</p><p className="text-xs text-violet-600 mt-2">Mündlich oder auf Papier reicht. Die Challenge ist freiwillig.</p></details>}
+                  {stepComplete && activeStep.stepIndex === (topicSteps[activeStep.topicIndex]?.length || 0) - 1 && <LearningRewardGame moduleId={module.id} topicId={activeTopic.id} />}
                   {activeIndex === allSteps.length - 1 && <MiniCrossword module={module} />}
 
                   <div className="mt-7 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border-t border-slate-200 pt-6">
