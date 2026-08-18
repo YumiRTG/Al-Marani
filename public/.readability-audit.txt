@@ -1,0 +1,195 @@
+## LF1
+Topics:
+- berufsbild: 1. Der MFA-Beruf und die duale Ausbildung
+- vertrag: 2. Ausbildungsvertrag, Probezeit und Beendigung
+- jugendarbeitsschutz: 3. Jugendarbeitsschutz und Mutterschutz
+- verantwortung: 4. Verantwortung, Schweigepflicht und Haftung
+- gesundheitswesen: 5. Die Arztpraxis im Gesundheitswesen
+- arbeitsschutz-team: 6. Arbeitsschutz, Team und professionelle Kommunikation
+Long passages:
+- 55 words: Nach der Probezeit gelten strengere Regeln. Eine Kündigung aus wichtigem Grund kann fristlos erfolgen. Auszubildende können außerdem mit einer Frist von vier Wochen kündigen, wenn sie die Berufsausbildung aufgeben oder sich für einen andere
+- 51 words: Das Mutterschutzgesetz gilt auch in der Ausbildung. Eine Gefährdungsbeurteilung und geeignete Schutzmaßnahmen sind besonders wichtig, weil in Arztpraxen biologische Arbeitsstoffe, Gefahrstoffe, körperliche Belastungen oder Infektionsrisiken
+- 44 words: Schon die Tatsache, dass eine Person Patientin oder Patient einer Praxis ist, kann vertraulich sein. Diagnosen, Befunde, Medikamente, Gespräche und persönliche Daten dürfen nicht unbefugt weitergegeben werden. Die Schweigepflicht gilt auch 
+- 40 words: Ärztekammern übernehmen berufsrechtliche Aufgaben und sind bei der MFA-Ausbildung zuständige Stellen. Kassenärztliche Vereinigungen organisieren die vertragsärztliche Versorgung in den Regionen. Krankenkassen finanzieren Leistungen ihrer Ve
+- 39 words: Nach § 20 BBiG muss die Probezeit mindestens einen und darf höchstens vier Monate dauern. In dieser Zeit prüfen beide Seiten, ob Beruf, Betrieb und Zusammenarbeit passen. Während der Probezeit kann das Ausbildungsverhältnis ohne Einhalten e
+- 39 words: Gefährdungen werden systematisch erkannt und reduziert. In einer Praxis zählen dazu unter anderem Stich- und Schnittverletzungen, Infektionsgefahren, Gefahrstoffe, Stolperstellen, ergonomische Belastungen und psychische Beanspruchung. Für T
+Signals: grundsätzlich=3, unter anderem=3
+Videos without embedUrl: Die duale Berufsausbildung in Deutschland | Ausbildungsvertrag – das steht drin | Rechte und Pflichten als Azubi | Rechte und Pflichten in der Ausbildung – einfach erklärt | Ausbildung – Unterrichtsmaterial und Medien
+
+## LF2
+Topics:
+- empfang: 1. Der professionelle Patientenempfang
+- kommunikation: 2. Gesprächsführung, schwierige Situationen und Telefon
+- behandlungsvertrag: 3. Behandlungsvertrag, Information und Patientenrechte
+- datenschutz: 4. Datenschutz und sichere Patientendaten
+- digital: 5. eGK, Telematikinfrastruktur, ePA und E-Rezept
+- versicherung-abrechnung: 6. Versicherungsarten und Abrechnungsgrundlagen
+Long passages:
+- 42 words: Am Empfang treffen medizinische Versorgung, Organisation und Kommunikation aufeinander. Eine MFA klärt freundlich und strukturiert, wer der Patient ist, weshalb er kommt, ob ein Termin besteht und ob Hinweise auf eine dringliche Situation v
+- 41 words: Bei Beschwerden oder Wartezeitkonflikten zuerst ruhig zuhören und das konkrete Problem herausarbeiten. Nicht provozieren, nicht vor anderen diskutieren und keine Zusagen machen, die nicht eingehalten werden können. Drohungen, Gewalt oder me
+- 39 words: Gesundheitsdaten gehören zu den besonders geschützten personenbezogenen Daten. In der Praxis dürfen sie nur verarbeitet werden, wenn dafür eine Rechtsgrundlage besteht. Zusätzlich gilt die berufliche Schweigepflicht. Datenschutz betrifft ni
+Signals: beziehungsweise=1, grundsätzlich=7, unter anderem=1, Unterlage=1
+Videos without embedUrl: Gesprächsführung | Konfliktmanagement | Datenschutz und eHealth | ePA kurz erklärt – Videos für Arztpraxen | ePA für alle – Erklärvideos für Praxen | E-Rezept und Datenschutz
+
+## LF3
+Topics:
+- infektionslehre: 1. Erreger, Infektion und Übertragungswege
+- basishygiene: 2. Basishygiene, Händedesinfektion und persönliche Schutzausrüstung
+- desinfektion: 3. Reinigung, Desinfektion und Sterilisation
+- medizinprodukte: 4. Medizinprodukte sicher aufbereiten
+- infektionskrankheiten: 5. Infektionskrankheiten, Impfungen und Meldepflicht
+- nadelstich: 6. Nadelstichverletzung und berufliche Exposition
+- hygieneplan: 7. Hygieneplan, Abfall und Qualitätsmanagement
+Long passages:
+- 46 words: Im medizinischen Alltag ist die hygienische Händedesinfektion für viele Situationen die zentrale Maßnahme. Händewaschen entfernt vor allem Schmutz und ist zusätzlich bei sichtbarer Verschmutzung oder in besonderen Situationen nötig. Häufige
+- 45 words: Bei einer Infektion dringen vermehrungsfähige Krankheitserreger in einen Organismus ein, vermehren sich oder lösen eine Reaktion aus. Eine Kontamination bedeutet zunächst nur, dass Erreger oder potenziell infektiöses Material auf einer Ober
+- 43 words: Das Infektionsschutzgesetz enthält Meldepflichten für bestimmte Krankheiten, Verdachtsfälle, Todesfälle und Erregernachweise. Für die MFA ist wichtig, dass nicht „nach Gefühl“ gemeldet wird: Die Praxis arbeitet nach den gesetzlichen Vorgabe
+Signals: beziehungsweise=2, grundsätzlich=1, unter anderem=2
+Videos without embedUrl: Wie Krankheitserreger über die Hände weitergegeben werden | Richtig Händewaschen | Hygiene im Krankheitsfall | Übertragung über Hände und Gegenstände | Filme zum Infektionsschutz
+
+## LF4
+Topics:
+- anamnese-basics: 1. Anamnese von Grund auf verstehen
+- symptome-untersuchung: 2. Symptome & körperliche Untersuchung
+- gelenke-arthrose: 3. Gelenke, Bewegungsapparat & Arthrose
+- knochen-frakturen: 4. Knochenaufbau & Frakturen – sehr ausführlich
+- anatomie-wirbelsaeule: 5. Anatomische Richtungsbegriffe & Wirbelsäule
+- arzneimittel-basics: 6. Arzneimittel – Grundlagen ohne Vorwissen
+- injektionen-sicherheit: 7. Injektionen & Medikamentensicherheit
+Long passages:
+- 44 words: Eine Patientin soll ein Medikament s.c. erhalten. Auf dem vorbereiteten Tablett liegt jedoch ein Präparat mit anderem Namen als in der Anordnung. Was tust du? → Nicht verabreichen. Vorgang stoppen, Anordnung und Präparat erneut prüfen und U
+- 43 words: Anamnese bedeutet: Die Krankengeschichte und die aktuellen Beschwerden eines Patienten werden systematisch erfragt. Bevor untersucht, Blut abgenommen oder eine Diagnose gestellt wird, muss zuerst verstanden werden, was das Problem ist. Eine
+- 42 words: Bei einer Injektion wird ein Arzneimittel mit Kanüle und Spritze in Gewebe oder ein Gefäß eingebracht. Je nach Ziel wird ein anderer Applikationsweg gewählt. Für Auszubildende ist zuerst wichtig, die Wege sicher zu unterscheiden und die hyg
+- 42 words: Arthrose ist eine degenerative Gelenkerkrankung. Vereinfacht gesagt wird der Gelenkknorpel geschädigt. Der Knorpel sorgt normalerweise dafür, dass Gelenkflächen glatt gegeneinander gleiten und Belastungen abgefedert werden. Wird er dünner u
+Signals: youtube.com/results=1, bisherige=1
+Videos without embedUrl: Zusatzvideo: Knochen und Frakturen suchen/vertiefen | Praxisvideo: intramuskuläre Impfinjektion | Subkutane Injektion – Einführung
+
+## LF5
+Topics:
+- herz-basics: 1. Das Herz wirklich verstehen
+- kreislauf-puls: 2. Kreislauf, Puls und Blutdruck
+- atemwege-basics: 3. Atemwege von oben bis unten
+- gasaustausch: 4. Gasaustausch in den Alveolen
+- goae-basics: 5. GOÄ – Privatabrechnung ohne Angst
+- praxisfaelle: 6. Praxisfälle zum Verbinden der Themen
+Signals: grundsätzlich=2
+
+## LF6
+Topics:
+- rechtsgeschaefte: 1. Rechtsgeschäfte und Geschäftsfähigkeit
+- lagerhaltung: 2. Lagerhaltung in der Arztpraxis
+- oekologie: 3. Ökologie und sichere Entsorgung
+- btm-medizinprodukte: 4. Betäubungsmittel und Medizinprodukte
+- kaufvertrag: 5. Kaufvertrag und Störungen
+- zahlungsverkehr: 6. Zahlungsverkehr und Verzugszinsen
+- praxisfaelle: 7. Große Praxisfälle
+Long passages:
+- 39 words: Ein Rechtsgeschäft ist eine Handlung, mit der eine rechtliche Folge gewollt herbeigeführt wird. In der Praxis begegnet dir das zum Beispiel beim Einkauf von Büromaterial, bei Verträgen oder bei Zahlungen. Entscheidend ist: Eine Person erklä
+Signals: grundsätzlich=5, unter anderem=2, Lernvideo-Suche=1, youtube.com/results=1, Lernunterlage=1, Unterlage=1
+Videos without embedUrl: Vertiefung: Geschäftsfähigkeit einfach wiederholen | Offizielle Vertiefung: BtM-Rezepte
+
+## LF7
+Topics:
+- marketing: 1. Praxismarketing beginnt beim Patientenkontakt
+- igel: 2. IGeL – Selbstzahlerleistungen sauber erklären
+- organisation: 3. Aufbau- und Ablauforganisation
+- post: 4. Post, Dokumente und vertrauliche Informationen
+- qm: 5. Qualitätsmanagement und PDCA
+- cases: 6. Praxisfälle zum Anwenden
+Signals: grundsätzlich=1, Lernvideo-Suche=1, youtube.com/results=1
+Videos without embedUrl: Vertiefung: IGeL verstehen | Offizielle Vertiefung: Qualitätsmanagement in der Praxis
+
+## LF8
+Topics:
+- harnsystem: 1. Harnsystem – erst den Weg verstehen
+- nephron: 2. Nephron und Harnbildung
+- urin: 3. Urinuntersuchung und Harnmengen
+- weiblich: 4. Weibliche Geschlechtsorgane und Zyklus
+- schwangerschaft: 5. Schwangerschaft, Geburt und APGAR
+- maennlich: 6. Männliche Geschlechtsorgane
+- hormone: 7. Hormonsystem und Verhütung
+- sti: 8. Sexuell übertragbare Infektionen
+- cases: 9. Prüfungsnahe Fälle
+Signals: grundsätzlich=1, unter anderem=4
+
+## LF9
+Topics:
+- lf9-01-naehrstoffe: 1. Nährstoffe – Kohlenhydrate, Proteine, Fette, Vitamine & Mineralstoffe
+- lf9-02-verdauungsorgane: 2. Verdauungsorgane – Weg, Aufbau und Funktion
+- lf9-03-diagnostik: 3. Diagnostik – Symptome, Sonografie, Gastroskopie, Labor und Stuhltest
+- lf9-04-oberer-gi-trakt: 4. Oberer Magen-Darm-Trakt – Infektion, Laktoseintoleranz, Reflux, Gastritis & Ulkus
+- lf9-05-unterer-gi-trakt: 5. Unterer Magen-Darm-Trakt – Divertikel, Appendizitis, akutes Abdomen & Hämorrhoiden
+- lf9-06-tumore: 6. Tumore & Krebs im Verdauungstrakt
+- lf9-07-leber-galle-pankreas: 7. Gallensteine, Pankreatitis, Fettleber, Hepatitis & Zirrhose
+- lf9-08-metabolisch: 8. Metabolisches Syndrom – Adipositas, Hyperlipidämie & Gicht
+- lf9-09-diabetes-grundlagen: 9. Diabetes I – Glukosestoffwechsel, Insulin, Typ 1 & Typ 2
+- lf9-10-diabetes-diagnostik: 10. Diabetes II – Gestationsdiabetes, Diagnostik, Entgleisungen, Spätfolgen & Therapie
+- video-mediathek: 🎬 Video-Mediathek Lernfeld 9 – alle bisherigen + neue Videos
+Long passages:
+- 78 words: Laborwerte geben Hinweise auf Organe oder Funktionsbereiche. GOT, GPT und GGT werden in der Unterlage als Leberenzyme geführt. AP kann unter anderem mit Gallenwegen und Knochen zusammenhängen. Bilirubin ist ein Gallenfarbstoff. INR spiegelt
+- 68 words: Purine sind Bestandteile von Zellen und werden im Körper zu Harnsäure abgebaut. Ist die Harnsäurekonzentration dauerhaft erhöht, können Uratkristalle ausfallen. Lagern sie sich in Gelenken ab, kann eine sehr schmerzhafte akute Entzündung en
+- 68 words: Fette liefern besonders viel Energie und dienen als langfristiger Energiespeicher. Sie polstern Organe, isolieren gegen Kälte und sind Bestandteil von Zellmembranen. Nahrungsfette liegen häufig als Triglyceride vor. Ein Triglycerid besteht 
+- 68 words: Ein Ulkus ist laut Lernunterlage ein tiefer Gewebsdefekt, der über die oberflächliche Epithelgrenze hinausreicht. Magenulkus heißt Ulcus ventriculi, Zwölffingerdarmulkus Ulcus duodeni. Als Beschwerden nennt die Unterlage Inappetenz, Übelkei
+- 66 words: Die Leber bildet Gallenflüssigkeit und verarbeitet viele resorbierte Nährstoffe. Sie kann Glukose als Glykogen speichern, bildet wichtige Plasmaproteine und verändert beziehungsweise entgiftet zahlreiche Stoffe. Die Gallenblase bildet die G
+- 65 words: Das akute Abdomen beschreibt eine Kombination aus Zeichen, die auf eine potenziell schwere Erkrankung im Bauchraum hinweisen. Die Unterlage nennt starke Bauchschmerzen mit Abwehrspannung, Übelkeit/Erbrechen, veränderte Darmgeräusche beziehu
+- 61 words: Proteine bestehen aus Aminosäuren. Der Körper benötigt sie zum Aufbau und zur Erneuerung von Gewebe. Außerdem bestehen zahlreiche Enzyme, Transportproteine, Antikörper und einige Hormone aus Proteinen oder enthalten Proteinbestandteile. Ess
+- 61 words: Bei der sogenannten Blinddarmentzündung ist nicht der gesamte Blinddarm entzündet, sondern meist der Wurmfortsatz, die Appendix vermiformis. Typisch ist ein Schmerzverlauf, bei dem Schmerzen zunächst diffus oder im Oberbauch/Nabelbereich be
+- 60 words: Cholesterin ist ein notwendiger Körperstoff, wird aber in Lipoproteinen transportiert. LDL transportiert Cholesterin von der Leber zu Geweben. Bei dauerhaft hohen LDL-Werten kann Cholesterin in Gefäßwänden abgelagert werden und zur Plaquebi
+- 58 words: Zwischen Speiseröhre und Magen liegt ein funktioneller Schließmechanismus. Wenn er nicht ausreichend schließt, kann saurer Mageninhalt in die Speiseröhre zurückfließen. Die Speiseröhre besitzt nicht denselben Säureschutz wie der Magen. Wied
+Signals: beziehungsweise=17, grundsätzlich=3, unter anderem=13, beispielsweise=1, bisherige=43, Lernunterlage=18, Unterlage=49
+Videos without embedUrl: Wie funktioniert Ultraschall? | Wie funktioniert eine Magenspiegelung? | Darmkrebsvorsorge – Stuhltest oder Darmspiegelung? | Was sind Infektionskrankheiten? | Wie entwickelt sich eine Laktoseintoleranz? | Was ist die Refluxkrankheit? | Wie entsteht eine Magenschleimhautentzündung? | Divertikulitis – Schmerzen im Bauch | Was passiert bei einer Blinddarmentzündung? | Was sind Hämorrhoiden? | Was ist Krebs? | Der Unterschied zwischen Primärtumor und Metastasen | Wie wird Krebs behandelt? | Wie entstehen Gallensteine? | Akute Entzündung der Bauchspeicheldrüse | Fettleber | Leberzirrhose | Was ist Cholesterin? | Wie helfen Statine bei erhöhten Cholesterinwerten? | Gicht – Ursachen, Verlauf und Behandlung
+
+## LF10
+Topics:
+- haut-wunde: 1. Haut, Wundarten und Wundbeurteilung
+- wundheilung: 2. Wundheilung, chronische Wunden und Infektionszeichen
+- wundversorgung: 3. Wundversorgung und Verbände
+- kleine-chirurgie: 4. Kleine chirurgische Eingriffe vorbereiten und assistieren
+- lokalanaesthesie: 5. Lokalanästhesie und Patientensicherheit
+- hauttumoren: 6. Hauttumoren und Gewebeproben
+- arbeitsunfall: 7. Arbeits- und Wegeunfälle, D-Arzt und UV-GOÄ
+Long passages:
+- 42 words: Nach der Blutstillung räumt die Entzündungsreaktion Zellreste und Keime auf. Anschließend entsteht Granulationsgewebe mit neuen Gefäßen. Von den Wundrändern wächst Epithel über die Oberfläche. Die Narbe wird danach über Wochen und Monate um
+- 41 words: Nach den aktuellen DGUV-Regeln ist eine Vorstellung beim Durchgangsarzt unter anderem erforderlich, wenn die Unfallverletzung über den Unfalltag hinaus zur Arbeitsunfähigkeit führt, die Behandlung voraussichtlich länger als eine Woche dauer
+- 41 words: Eine Wunde kann chronisch werden, wenn Grunderkrankungen oder lokale Faktoren die Heilung stören. gesund.bund.de beschreibt Wunden als chronisch, wenn sie trotz Behandlung innerhalb von vier bis zwölf Wochen nicht abheilen. Häufige Zusammen
+- 39 words: Zum hellen Hautkrebs zählen vor allem Basalzellkarzinom und Plattenepithelkarzinom. Basalzellkarzinome metastasieren nur selten, können aber lokal Gewebe zerstören. Plattenepithelkarzinome können metastasieren. Das maligne Melanom kann früh
+Signals: beziehungsweise=3, grundsätzlich=2, unter anderem=1
+Videos without embedUrl: Was ist eine Entzündung? | Chronische Wunden – Ursachen und Behandlung | Lokalanästhesie – Begriff und Grundprinzip | Weißer Hautkrebs | Schwarzer Hautkrebs | Kurz- und Erklärfilm zum D-Arzt-Verfahren
+
+## LF11
+Topics:
+- praevention-grundlagen: 1. Prävention und Gesundheitsförderung
+- checkup: 2. Gesundheits-Check-up und Risikoprofil
+- krebsfrueherkennung: 3. Krebsfrüherkennung aktuell organisieren
+- impfmanagement: 4. Impfungen und Impfmanagement
+- beratung: 5. Gesundheitsberatung und Motivation
+- igel-recall: 6. IGeL, Recall und transparente Kosteninformation
+- reha-selbsthilfe: 7. Rehabilitation, Teilhabe und Selbsthilfe
+Long passages:
+- 53 words: Frauen von 20 bis 34 Jahren haben im organisierten Programm jährlich Anspruch auf zytologischen Abstrich und klinische Untersuchung. Ab 35 erfolgt alle drei Jahre eine Kombinationsuntersuchung aus Zytologie und HPV-Test; die jährliche klini
+- 47 words: Nach dem Stand des Bundesgesundheitsministeriums vom März 2026 haben gesetzlich Versicherte von 18 bis 34 Jahren einmalig Anspruch auf den Gesundheits-Check-up. Ab 35 Jahren besteht der Anspruch grundsätzlich alle drei Jahre. Er dient insbe
+- 46 words: Prävention umfasst Maßnahmen, die Krankheiten verhindern, früh erkennen oder deren Folgen begrenzen sollen. Gesundheitsförderung richtet den Blick zusätzlich darauf, Menschen zu befähigen, ihre Gesundheit im Alltag aktiv zu stärken. In der 
+- 44 words: Individuelle Gesundheitsleistungen (IGeL) sind ärztliche Leistungen, die in der jeweiligen Situation nicht zum regulären Leistungskatalog der gesetzlichen Krankenversicherung gehören und vom Patienten selbst bezahlt werden. Vor der Durchfüh
+- 43 words: Seit April 2025 gelten für Frauen und Männer ab 50 Jahren die gleichen Angebote: maximal zwei Früherkennungs-Koloskopien im Abstand von zehn Jahren oder alternativ ein immunologischer Test auf verborgenes Blut im Stuhl (iFOBT) alle zwei Jah
+- 41 words: Für verschiedene Krebsarten gibt es unterschiedliche Untersuchungen, Zielgruppen und Intervalle. Die MFA muss deshalb Alter, Geschlecht beziehungsweise Organsituation, Risikoprofil und aktuelle Richtlinie prüfen. Screening richtet sich an g
+- 40 words: Rehabilitation unterstützt Menschen nach Erkrankung oder bei drohender dauerhafter Einschränkung. Je nach Situation kommen medizinische Rehabilitation oder Leistungen zur Teilhabe am Arbeitsleben infrage. Die Deutsche Rentenversicherung bes
+- 40 words: Für aktive und ehemalige starke Raucherinnen und Raucher im Alter von 50 bis 75 Jahren gibt es seit April 2026 unter den festgelegten Voraussetzungen ein jährliches Angebot zur Früherkennung mit Niedrigdosis-CT. Die Anspruchsberechtigung mu
+Signals: beziehungsweise=3, grundsätzlich=6, unter anderem=3, gegebenenfalls=1
+Videos without embedUrl: Gesundheits-Check-up | Diese Möglichkeiten zur Darmkrebsvorsorge gibt es | Darmkrebsvorsorge: Krebs verhindern, bevor er entsteht | Lungenkrebs-Früherkennung für Raucherinnen und Raucher | HPV: Impfung schützt Mädchen und Jungen | STIKO-App für medizinisches Fachpersonal | IGeL versus GKV | Was ist Selbsthilfe? | Berufliche Rehabilitation
+
+## LF12
+Topics:
+- perspektiven: 1. Eigene Stärken und berufliche Ziele entwickeln
+- bewerbung: 2. Stellenanalyse, Bewerbung und Vorstellungsgespräch
+- arbeitsvertrag: 3. Arbeitsvertrag, Tarifvertrag und Arbeitszeugnis
+- arbeitsrecht: 4. Arbeitszeit, Pausen, Urlaub und Krankheit
+- sozialversicherung: 5. Sozialversicherung und Absicherung
+- entgelt: 6. Entgeltabrechnung, Steuern und persönliche Finanzen
+- vorsorge: 7. Altersvorsorge und betriebliche Altersversorgung
+- weiterbildung-stress: 8. Weiterbildung, Selbstmanagement und gesundes Arbeiten
+Long passages:
+- 53 words: Nach § 109 Gewerbeordnung besteht bei Beendigung des Arbeitsverhältnisses Anspruch auf ein schriftliches Zeugnis. Das einfache Zeugnis nennt Art und Dauer der Tätigkeit. Auf Verlangen umfasst ein qualifiziertes Zeugnis zusätzlich Leistung u
+- 42 words: Für MFA werden bundesweite Tarifverträge zwischen der Arbeitsgemeinschaft ärztlicher Arbeitgeberinnen und Arbeitgeber von Medizinischen Fachangestellten (AAA) und dem Verband medizinischer Fachberufe (vmf) geschlossen. Sie sind nicht allgem
+- 38 words: Medizin, Digitalisierung, Abrechnung und rechtliche Vorgaben verändern sich. Fortbildungen halten vorhandenes Wissen aktuell; umfangreichere Weiterbildungen können neue Aufgaben- und Verantwortungsbereiche eröffnen. Bei der Auswahl werden Z
+Signals: beziehungsweise=3, grundsätzlich=10, unter anderem=2, gegebenenfalls=2, bisherige=2, Unterlage=7
+Videos without embedUrl: Berufsberatung im Erwerbsleben | Bewerbungsunterlagen: Das gehört rein | Das Vorstellungsgespräch: Alles, was du wissen musst | MFA-Tarife | Unsere Sozialversicherung | Die drei Säulen der Altersvorsorge | Berufsberatung im Erwerbsleben
