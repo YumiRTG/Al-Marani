@@ -50,3 +50,11 @@ export interface LearningModule {
   topics: LearningTopic[];
   questions: QuizQuestion[];
 }
+
+export interface LearningResult {
+  score: number;
+  total: number;
+  percentage: number;
+  grade: number;
+  completedAt: string;
+}
