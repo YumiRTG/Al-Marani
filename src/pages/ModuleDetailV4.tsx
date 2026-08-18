@@ -344,6 +344,24 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
     window.scrollTo({ top: 200, behavior: 'smooth' });
   }, [allSteps, unlockedThrough]);
 
+  const jumpToTopic = useCallback((topicIndex: number) => {
+    const startIndex = topicSteps.slice(0, topicIndex).reduce((sum, steps) => sum + steps.length, 0);
+    if (startIndex < 0 || startIndex >= allSteps.length) return;
+
+    const nextSkipped = new Set(skippedSteps);
+    allSteps.slice(0, startIndex).forEach(step => {
+      if (!completedSteps.has(step.key)) nextSkipped.add(step.key);
+    });
+
+    setSkippedSteps(nextSkipped);
+    const resolved = new Set([...completedSteps, ...nextSkipped]);
+    const progress = allSteps.length ? Math.round((resolved.size / allSteps.length) * 90) : 0;
+    onUpdateProgress(module.id, progress);
+    setActiveStepKey(allSteps[startIndex].key);
+    setActiveTab('learn');
+    window.scrollTo({ top: 200, behavior: 'smooth' });
+  }, [topicSteps, allSteps, skippedSteps, completedSteps, module.id, onUpdateProgress]);
+
   const choosePractice = (step: GuidedStep, index: number, optionId: string) => {
     const key = checkKey(step, index);
     setSelections(previous => ({ ...previous, [key]: optionId }));
@@ -465,7 +483,8 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
         {activeTab === 'learn' && activeStep && (
           <div className="grid lg:grid-cols-[280px_1fr] gap-6 items-start">
             <aside className="lg:sticky lg:top-24 bg-white/90 rounded-2xl p-4 shadow-sm border border-white">
-              <div className="text-xs uppercase tracking-[.16em] font-bold text-teal-600 mb-3">Inhalte</div>
+              <div className="text-xs uppercase tracking-[.16em] font-bold text-teal-600 mb-2">Inhalte</div>
+              <p className="text-[11px] leading-4 text-slate-400 mb-3">Schon weiter? Klicke direkt auf das Thema, bei dem du einsteigen möchtest. Alles davor wird automatisch übersprungen.</p>
               <div className="space-y-1.5 max-h-[68vh] overflow-y-auto pr-1">
                 {module.topics.map((topic, topicIndex) => {
                   const steps = topicSteps[topicIndex] || [];
@@ -474,7 +493,8 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
                   const done = steps.length > 0 && steps.every(step => completedSteps.has(step.key));
                   const skipped = steps.length > 0 && steps.every(step => skippedSteps.has(step.key));
                   const current = topicIndex === activeStep.topicIndex;
-                  return <button key={topic.id} disabled={!unlocked} onClick={() => goToStep(Math.min(start, unlockedThrough))} className={`w-full rounded-xl px-3 py-3 text-left border transition-all ${current ? 'bg-emerald-50 border-teal-300' : skipped ? 'bg-amber-50 border-amber-200' : done ? 'bg-slate-50 border-slate-200' : 'bg-white border-transparent hover:bg-slate-50'} disabled:opacity-45`}><div className="flex items-start gap-2.5"><div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold ${skipped ? 'bg-amber-100 text-amber-700' : done ? 'bg-emerald-100 text-emerald-600' : current ? 'bg-teal-600 text-white' : 'bg-slate-100 text-slate-500'}`}>{skipped ? <SkipForward className="w-3.5 h-3.5" /> : done ? <Check className="w-4 h-4" /> : unlocked ? topicIndex + 1 : <LockKeyhole className="w-3.5 h-3.5" />}</div><div className="min-w-0"><div className="text-xs font-semibold text-slate-800 leading-5 line-clamp-2">{topic.title}</div><div className="text-[11px] text-slate-400 mt-1">{skipped ? 'übersprungen' : `${steps.length} Teile`}</div></div></div></button>;
+                  const handleTopicClick = () => unlocked ? goToStep(start) : jumpToTopic(topicIndex);
+                  return <button key={topic.id} onClick={handleTopicClick} className={`w-full rounded-xl px-3 py-3 text-left border transition-all ${current ? 'bg-emerald-50 border-teal-300' : skipped ? 'bg-amber-50 border-amber-200' : done ? 'bg-slate-50 border-slate-200' : unlocked ? 'bg-white border-transparent hover:bg-slate-50' : 'bg-white border-slate-100 hover:border-teal-300 hover:bg-teal-50'}`}><div className="flex items-start gap-2.5"><div className={`w-7 h-7 rounded-lg flex items-center justify-center shrink-0 text-xs font-bold ${skipped ? 'bg-amber-100 text-amber-700' : done ? 'bg-emerald-100 text-emerald-600' : current ? 'bg-teal-600 text-white' : unlocked ? 'bg-slate-100 text-slate-500' : 'bg-teal-50 text-teal-600'}`}>{skipped ? <SkipForward className="w-3.5 h-3.5" /> : done ? <Check className="w-4 h-4" /> : unlocked ? topicIndex + 1 : <SkipForward className="w-3.5 h-3.5" />}</div><div className="min-w-0"><div className={`text-xs font-semibold leading-5 line-clamp-2 ${unlocked || current ? 'text-slate-800' : 'text-slate-600'}`}>{topic.title}</div><div className={`text-[11px] mt-1 ${!unlocked ? 'text-teal-600 font-semibold' : 'text-slate-400'}`}>{skipped ? 'übersprungen' : !unlocked ? `Hier einsteigen · ${steps.length} Teile` : `${steps.length} Teile`}</div></div></div></button>;
                 })}
               </div>
             </aside>
