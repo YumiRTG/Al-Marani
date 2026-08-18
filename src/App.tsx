@@ -1,7 +1,8 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Dashboard } from '@/pages/Dashboard';
-import { ModuleDetail } from '@/pages/ModuleDetailV3';
+import { ModuleDetail } from '@/pages/ModuleDetailV4';
 import { modules } from '@/data';
+import type { LearningResult } from '@/types';
 
 type Page = 'dashboard' | 'module';
 
@@ -28,9 +29,25 @@ function App() {
     return {};
   });
 
+  const [moduleResults, setModuleResults] = useState<Record<string, LearningResult>>(() => {
+    const saved = localStorage.getItem('medlearn-results');
+    if (saved) {
+      try {
+        return JSON.parse(saved);
+      } catch {
+        return {};
+      }
+    }
+    return {};
+  });
+
   useEffect(() => {
     localStorage.setItem('medlearn-progress', JSON.stringify(moduleProgress));
   }, [moduleProgress]);
+
+  useEffect(() => {
+    localStorage.setItem('medlearn-results', JSON.stringify(moduleResults));
+  }, [moduleResults]);
 
   const handleOpenModule = useCallback((moduleId: string) => {
     setState({ page: 'module', activeModuleId: moduleId });
@@ -49,6 +66,13 @@ function App() {
     }));
   }, []);
 
+  const handleUpdateResult = useCallback((moduleId: string, result: LearningResult) => {
+    setModuleResults(prev => ({
+      ...prev,
+      [moduleId]: result,
+    }));
+  }, []);
+
   const activeModule = state.activeModuleId
     ? modules.find(m => m.id === state.activeModuleId) || null
     : null;
@@ -59,6 +83,7 @@ function App() {
         <Dashboard
           modules={modules}
           moduleProgress={moduleProgress}
+          moduleResults={moduleResults}
           onOpenModule={handleOpenModule}
         />
       )}
@@ -67,6 +92,7 @@ function App() {
           module={activeModule}
           onBack={handleBackToDashboard}
           onUpdateProgress={handleUpdateProgress}
+          onUpdateResult={handleUpdateResult}
           currentProgress={moduleProgress[activeModule.id] || 0}
           allModules={modules}
           onOpenModule={handleOpenModule}
