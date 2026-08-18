@@ -1,6 +1,6 @@
 import { useState, useCallback, useEffect } from 'react';
 import { Dashboard } from '@/pages/Dashboard';
-import { ModuleDetail } from '@/pages/ModuleDetailV2';
+import { ModuleDetail } from '@/pages/ModuleDetailV3';
 import { modules } from '@/data';
 
 type Page = 'dashboard' | 'module';
@@ -16,7 +16,6 @@ function App() {
     activeModuleId: null,
   });
 
-  // Load progress from localStorage
   const [moduleProgress, setModuleProgress] = useState<Record<string, number>>(() => {
     const saved = localStorage.getItem('medlearn-progress');
     if (saved) {
