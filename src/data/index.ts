@@ -23,6 +23,7 @@ import { refineLf9 } from './lf9Refinement';
 import { finalPolishLf9 } from './lf9FinalPolish';
 import { polishLf9Topic6 } from './lf9Topic6Polish';
 import { addVideoLibrary } from './videoExtras';
+import { finalReadabilityPolish } from './finalReadabilityPolish';
 import type { LearningModule, TopicContent } from '@/types';
 
 const supportedContentTypes = new Set<TopicContent['type']>([
@@ -70,6 +71,7 @@ export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11,
   .map(polishLf9Topic6)
   .map(cleanModule)
   .map(withGitHubPagesAssets)
-  .map(addVideoLibrary);
+  .map(addVideoLibrary)
+  .map(finalReadabilityPolish);
 
 export { lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12 };
