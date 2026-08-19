@@ -24,6 +24,7 @@ import { finalPolishLf9 } from './lf9FinalPolish';
 import { polishLf9Topic6 } from './lf9Topic6Polish';
 import { addVideoLibrary } from './videoExtras';
 import { finalReadabilityPolish } from './finalReadabilityPolish';
+import { polishLf9QuestionQuality } from './lf9QuestionQuality';
 import { ensureLf9DistinctQuickChecks } from './lf9QuickCheckAnswers';
 import type { LearningModule, TopicContent } from '@/types';
 
@@ -74,6 +75,7 @@ export const modules = [lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11,
   .map(withGitHubPagesAssets)
   .map(addVideoLibrary)
   .map(finalReadabilityPolish)
+  .map(polishLf9QuestionQuality)
   .map(ensureLf9DistinctQuickChecks);
 
 export { lf1, lf2, lf3, lf4, lf5, lf6, lf7, lf8, lf9, lf10, lf11, lf12 };
