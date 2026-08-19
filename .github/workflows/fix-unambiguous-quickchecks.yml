@@ -1,15 +1,16 @@
-name: Fix unambiguous quick checks
+name: Run quick-check multi-select migration
 
 on:
   push:
     branches: [main]
+    paths:
+      - 'public/.trigger-unambiguous-quickchecks'
 
 permissions:
   contents: write
 
 jobs:
-  patch:
-    if: github.actor != 'github-actions[bot]'
+  migrate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -17,162 +18,14 @@ jobs:
         with:
           node-version: 22
           cache: npm
-      - name: Patch quick-check engine and LF9 section 6
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          page = Path('src/pages/ModuleDetailV4.tsx')
-          text = page.read_text(encoding='utf-8')
-          text = text.replace(
-            "type PracticeSource = { question: string; solution: string };",
-            "type PracticeSource = { question: string; solution: string; distractors?: string[] };"
-          )
-
-          old_parse = '''function parsePracticeItem(item: string, blocks: TopicContent[]): PracticeSource {
-  const separator = item.indexOf('|||');
-  if (separator >= 0) {
-    const question = clean(item.slice(0, separator));
-    const solution = clean(item.slice(separator + 3));
-    return { question, solution: solution || supportText(blocks) };
-  }
-  return { question: clean(item), solution: supportText(blocks) };
-}'''
-          new_parse = '''function parsePracticeItem(item: string, blocks: TopicContent[]): PracticeSource {
-  const parts = item.split('|||').map(clean);
-  if (parts.length >= 2) {
-    const [question, solution, ...distractors] = parts;
-    return {
-      question,
-      solution: solution || supportText(blocks),
-      distractors: distractors.filter(Boolean),
-    };
-  }
-  return { question: clean(item), solution: supportText(blocks) };
-}'''
-          if old_parse not in text:
-            raise SystemExit('parsePracticeItem block not found')
-          text = text.replace(old_parse, new_parse, 1)
-
-          old_options = '''function makeOptions(correctValue: string, pool: string[], seed: number): QuizOption[] {
-  const correct = shortAnswer(correctValue);
-  const candidates = unique(pool.map(value => shortAnswer(value))).filter(value => value !== correct && value.length >= 5);
-  const distractors: string[] = [];
-  for (let offset = 0; offset < candidates.length && distractors.length < 3; offset += 1) {
-    const value = candidates[(seed + offset * 3) % candidates.length];
-    if (value && !distractors.includes(value)) distractors.push(value);
-  }
-  const fallbacks = [
-    'Diese Aussage gehört nicht zu diesem Lernabschnitt.',
-    'Das Gegenteil davon wäre in diesem Zusammenhang richtig.',
-    'Diese Aussage hat hier keine fachliche Bedeutung.',
-  ];
-  fallbacks.forEach(value => {
-    if (distractors.length < 3 && value !== correct && !distractors.includes(value)) distractors.push(value);
-  });
-  const entries = [{ text: correct, correct: true }, ...distractors.slice(0, 3).map(text => ({ text, correct: false }))];
-  const shift = seed % entries.length;
-  return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
-}'''
-          new_options = '''function makeOptions(correctValue: string, pool: string[], seed: number, explicitDistractors: string[] = []): QuizOption[] {
-  const correct = shortAnswer(correctValue);
-  const explicit = unique(explicitDistractors.map(value => shortAnswer(value)))
-    .filter(value => value !== correct && value.length >= 5);
-  const candidates = explicit.length
-    ? explicit
-    : unique(pool.map(value => shortAnswer(value))).filter(value => value !== correct && value.length >= 5);
-  const distractors: string[] = [];
-  for (let offset = 0; offset < candidates.length && distractors.length < 3; offset += 1) {
-    const value = candidates[(seed + offset * 3) % candidates.length];
-    if (value && !distractors.includes(value)) distractors.push(value);
-  }
-  const fallbacks = [
-    'Keine der beschriebenen fachlichen Aussagen trifft auf die Frage zu.',
-    'Die genannten Begriffe können hier beliebig gleichgesetzt werden.',
-    'Der im Lernabschnitt erklärte Zusammenhang ist genau umgekehrt.',
-  ];
-  fallbacks.forEach(value => {
-    if (distractors.length < 3 && value !== correct && !distractors.includes(value)) distractors.push(value);
-  });
-  const entries = [{ text: correct, correct: true }, ...distractors.slice(0, 3).map(text => ({ text, correct: false }))];
-  const shift = seed % entries.length;
-  return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
-}'''
-          if old_options not in text:
-            raise SystemExit('makeOptions block not found')
-          text = text.replace(old_options, new_options, 1)
-
-          old_call = "options: makeOptions(source.solution, pool, seed + index * 11),"
-          new_call = "options: makeOptions(source.solution, pool, seed + index * 11, source.distractors),"
-          if old_call not in text:
-            raise SystemExit('buildChecks makeOptions call not found')
-          text = text.replace(old_call, new_call, 1)
-          page.write_text(text, encoding='utf-8')
-
-          lf9 = Path('src/data/lf9Topic6Polish.ts')
-          data = lf9.read_text(encoding='utf-8')
-          old_helper = '''type PracticePair = { question: string; solution: string };
-
-const practice = (title: string, items: PracticePair[]): TopicContent[] => [
-  { type: 'heading', title: `✍️ Kurz üben – ${title}` },
-  { type: 'list', items: items.map(item => `${item.question}|||${item.solution}`) },
-];'''
-          new_helper = '''type PracticePair = { question: string; solution: string };
-
-const distractorsByPractice: Record<string, string[]> = {
-  'gutartig oder bösartig?': [
-    'Ein gutartiger Tumor bildet grundsätzlich Fernmetastasen.',
-    'Tumor und Krebs sind immer genau dasselbe.',
-    'Bösartige Tumoren bleiben immer auf ihren Ursprungsort begrenzt.',
-  ],
-  'Krebsentstehung': [
-    'Ein Risikofaktor führt zwangsläufig und unmittelbar zu Krebs.',
-    'Bei Krebs ist die Zellteilung vollständig gestoppt.',
-    'Eine Metastase entsteht immer vor dem Primärtumor.',
-  ],
-  'Primärtumor und Metastase': [
-    'Eine Metastase ist immer der ursprüngliche Ort der Krebserkrankung.',
-    'Eine Lebermetastase eines Darmkarzinoms besteht aus normalen Leberzellen.',
-    'Primärtumor und Metastase bezeichnen grundsätzlich dieselbe Körperstelle.',
-  ],
-  'TNM': [
-    'T beschreibt ausschließlich Fernmetastasen.',
-    'N beschreibt nur die Größe des Primärtumors.',
-    'M0 bedeutet, dass Fernmetastasen sicher nachgewiesen wurden.',
-  ],
-  'Therapie verstehen': [
-    'Operation und Strahlentherapie wirken grundsätzlich im gesamten Körper.',
-    'Eine systemische Therapie wirkt ausschließlich an einer einzigen Körperstelle.',
-    'Bei jeder Krebserkrankung wird unabhängig von Tumorart und Ausbreitung dieselbe Therapie eingesetzt.',
-  ],
-  'Tumoren im Verdauungstrakt': [
-    'Ein einzelnes unspezifisches Symptom beweist bereits sicher eine Krebserkrankung.',
-    'Darmkrebs verursacht grundsätzlich niemals Blut im Stuhl oder veränderte Stuhlgewohnheiten.',
-    'Anhaltende Schluckbeschwerden spielen bei Erkrankungen der Speiseröhre keine Rolle.',
-  ],
-};
-
-const practice = (title: string, items: PracticePair[]): TopicContent[] => {
-  const distractors = distractorsByPractice[title] || [];
-  return [
-    { type: 'heading', title: `✍️ Kurz üben – ${title}` },
-    { type: 'list', items: items.map(item => [item.question, item.solution, ...distractors].join('|||')) },
-  ];
-};'''
-          if old_helper not in data:
-            raise SystemExit('LF9 practice helper not found')
-          lf9.write_text(data.replace(old_helper, new_helper, 1), encoding='utf-8')
-          PY
-      - name: Build
-        run: |
+      - run: python scripts/upgrade_quickchecks.py
+      - run: |
           rm -f package-lock.json
           npm install --legacy-peer-deps
           npm run build
-      - name: Commit fix and clean trigger files
-        run: |
-          rm -f .github/workflows/fix-unambiguous-quickchecks.yml public/.trigger-unambiguous-quickchecks
+      - run: |
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add src/pages/ModuleDetailV4.tsx src/data/lf9Topic6Polish.ts .github/workflows/fix-unambiguous-quickchecks.yml public/.trigger-unambiguous-quickchecks
-          git commit -m "Make LF9 quick checks unambiguous"
+          git add src/pages/ModuleDetailV4.tsx src/data/lf9Topic6Polish.ts
+          git commit -m "Add real multi-answer quick checks to LF9"
           git push
