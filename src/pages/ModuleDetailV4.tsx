@@ -38,8 +38,8 @@ interface ModuleDetailProps {
 }
 
 type Tab = 'learn' | 'control';
-type PracticeSource = { question: string; solution: string };
-type QuickCheck = { question: string; options: QuizOption[]; explanation: string };
+type PracticeSource = { question: string; solutions: string[]; distractors?: string[] };
+type QuickCheck = { question: string; options: QuizOption[]; explanation: string; multiple: boolean };
 type GuidedStep = {
   key: string;
   topicIndex: number;
@@ -54,7 +54,7 @@ type SavedGuidedState = {
   activeKey?: string;
   completed?: string[];
   skipped?: string[];
-  selections?: Record<string, string>;
+  selections?: Record<string, string | string[]>;
   checked?: string[];
 };
 
@@ -104,13 +104,13 @@ function supportText(blocks: TopicContent[]) {
 }
 
 function parsePracticeItem(item: string, blocks: TopicContent[]): PracticeSource {
-  const separator = item.indexOf('|||');
-  if (separator >= 0) {
-    const question = clean(item.slice(0, separator));
-    const solution = clean(item.slice(separator + 3));
-    return { question, solution: solution || supportText(blocks) };
+  const parts = item.split('|||').map(clean);
+  if (parts.length >= 2) {
+    const [question, correctPart, ...distractors] = parts;
+    const solutions = correctPart.split('&&&').map(clean).filter(Boolean);
+    return { question, solutions: solutions.length ? solutions : [supportText(blocks)], distractors: distractors.filter(Boolean) };
   }
-  return { question: clean(item), solution: supportText(blocks) };
+  return { question: clean(item), solutions: [supportText(blocks)] };
 }
 
 function fallbackPractice(title: string, blocks: TopicContent[]): PracticeSource[] {
@@ -118,13 +118,13 @@ function fallbackPractice(title: string, blocks: TopicContent[]): PracticeSource
   const definition = blocks.find(block => block.type === 'definition' && block.term && block.definition);
   if (definition?.term && definition.definition) {
     return [
-      { question: `Welche Aussage passt zu „${title}“?`, solution: points[0] || supportText(blocks) },
-      { question: `Was beschreibt „${definition.term}“ richtig?`, solution: definition.definition },
+      { question: `Welche Aussage passt zu „${title}“?`, solutions: [points[0] || supportText(blocks)] },
+      { question: `Was beschreibt „${definition.term}“ richtig?`, solutions: [definition.definition] },
     ];
   }
   return [
-    { question: `Welche Aussage passt am besten zu „${title}“?`, solution: points[0] || supportText(blocks) },
-    { question: 'Welche zweite Kernaussage solltest du dir merken?', solution: points[1] || points[0] || supportText(blocks) },
+    { question: `Welche Aussage passt am besten zu „${title}“?`, solutions: [points[0] || supportText(blocks)] },
+    { question: 'Welche zweite Kernaussage solltest du dir merken?', solutions: [points[1] || points[0] || supportText(blocks)] },
   ];
 }
 
@@ -149,15 +149,34 @@ function makeOptions(correctValue: string, pool: string[], seed: number): QuizOp
   return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
 }
 
+function makeQuickCheckOptions(correctValues: string[], seed: number, explicitDistractors: string[] = []): QuizOption[] {
+  const correct = unique(correctValues.map(value => shortAnswer(value))).filter(Boolean);
+  const fallbackDistractors = [
+    'Diese Aussage widerspricht dem im Lernabschnitt beschriebenen Zusammenhang.',
+    'Die genannten Fachbegriffe können hier beliebig gleichgesetzt werden.',
+    'Der im Lernabschnitt erklärte Zusammenhang gilt genau umgekehrt.',
+    'Diese Aussage lässt sich aus dem Lernstoff nicht ableiten.',
+  ];
+  const distractors = unique([...explicitDistractors.map(value => shortAnswer(value)), ...fallbackDistractors])
+    .filter(value => !correct.includes(value) && value.length >= 5);
+  const wrongCount = Math.max(2, 5 - correct.length);
+  const entries = [
+    ...correct.map(text => ({ text, correct: true })),
+    ...distractors.slice(0, wrongCount).map(text => ({ text, correct: false })),
+  ];
+  const shift = entries.length ? seed % entries.length : 0;
+  return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
+}
+
 function buildChecks(sources: PracticeSource[], blocks: TopicContent[], seed: number): QuickCheck[] {
   const fallback = fallbackPractice('diesem Thema', blocks);
   const selected = [...sources.slice(0, 2)];
   while (selected.length < 2) selected.push(fallback[selected.length] || fallback[0]);
-  const pool = unique([...learningPoints(blocks), ...sources.map(item => item.solution), ...fallback.map(item => item.solution)]);
   return selected.slice(0, 2).map((source, index) => ({
     question: source.question || 'Welche Aussage ist richtig?',
-    options: makeOptions(source.solution, pool, seed + index * 11),
-    explanation: source.solution,
+    options: makeQuickCheckOptions(source.solutions, seed + index * 11, source.distractors),
+    explanation: source.solutions.join(' · '),
+    multiple: source.solutions.length > 1,
   }));
 }
 
@@ -273,7 +292,7 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
   const [activeStepKey, setActiveStepKey] = useState(allSteps[0]?.key || '');
   const [completedSteps, setCompletedSteps] = useState<Set<string>>(new Set());
   const [skippedSteps, setSkippedSteps] = useState<Set<string>>(new Set());
-  const [selections, setSelections] = useState<Record<string, string>>({});
+  const [selections, setSelections] = useState<Record<string, string | string[]>>({});
   const [checked, setChecked] = useState<Set<string>>(new Set());
 
   const [controlIndex, setControlIndex] = useState(0);
@@ -335,7 +354,15 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
   const controlUnlocked = learningPercentage >= 100 || currentProgress >= 90;
 
   const checkKey = (step: GuidedStep, index: number) => `${step.key}::${index}`;
-  const checkCorrect = (step: GuidedStep, index: number) => step.checks[index]?.options.find(option => option.id === selections[checkKey(step, index)])?.correct === true;
+  const checkCorrect = (step: GuidedStep, index: number) => {
+    const check = step.checks[index];
+    if (!check) return false;
+    const selected = selections[checkKey(step, index)];
+    if (!check.multiple) return typeof selected === 'string' && check.options.find(option => option.id === selected)?.correct === true;
+    const selectedSet = new Set(Array.isArray(selected) ? selected : []);
+    const correctSet = new Set(check.options.filter(option => option.correct).map(option => option.id));
+    return selectedSet.size === correctSet.size && [...selectedSet].every(id => correctSet.has(id));
+  };
   const stepComplete = activeStep?.checks.every((_, index) => checked.has(checkKey(activeStep, index)) && checkCorrect(activeStep, index)) ?? false;
 
   const goToStep = useCallback((index: number) => {
@@ -365,7 +392,13 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
 
   const choosePractice = (step: GuidedStep, index: number, optionId: string) => {
     const key = checkKey(step, index);
-    setSelections(previous => ({ ...previous, [key]: optionId }));
+    const check = step.checks[index];
+    setSelections(previous => {
+      if (!check?.multiple) return { ...previous, [key]: optionId };
+      const current = Array.isArray(previous[key]) ? previous[key] as string[] : [];
+      const next = current.includes(optionId) ? current.filter(item => item !== optionId) : [...current, optionId];
+      return { ...previous, [key]: next };
+    });
     setChecked(previous => {
       const next = new Set(previous);
       next.delete(key);
@@ -375,7 +408,9 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
 
   const reviewPractice = (step: GuidedStep, index: number) => {
     const key = checkKey(step, index);
-    if (!selections[key]) return;
+    const selected = selections[key];
+    const hasSelection = Array.isArray(selected) ? selected.length > 0 : Boolean(selected);
+    if (!hasSelection) return;
     setChecked(previous => new Set(previous).add(key));
   };
 
@@ -514,8 +549,9 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
                         const selected = selections[key];
                         const wasChecked = checked.has(key);
                         const isCorrect = checkCorrect(activeStep, index);
-                        const correctOption = check.options.find(option => option.correct);
-                        return <div key={key} className="rounded-2xl bg-white border border-teal-100 p-4 sm:p-5 shadow-sm"><div className="flex items-start gap-3 mb-4"><div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold ${wasChecked && isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-teal-100 text-teal-700'}`}>{wasChecked && isCorrect ? <Check className="w-4 h-4" /> : index + 1}</div><p className="text-sm sm:text-base font-semibold text-slate-800 leading-6">{check.question}</p></div><div className="space-y-2.5">{check.options.map(option => { const chosen = selected === option.id; const showCorrect = wasChecked && option.correct; const showWrong = wasChecked && chosen && !option.correct; return <button key={option.id} onClick={() => choosePractice(activeStep, index, option.id)} className={`w-full flex items-start gap-3 p-3.5 sm:p-4 rounded-xl border-2 text-left ${showCorrect ? 'border-emerald-400 bg-emerald-50' : showWrong ? 'border-rose-400 bg-rose-50' : chosen ? 'border-teal-500 bg-teal-50' : 'border-slate-200 hover:border-teal-300'}`}><span className={`mt-0.5 w-5 h-5 rounded-full border-2 shrink-0 ${chosen ? 'border-teal-600 bg-teal-600' : 'border-slate-300'}`} /><span className="text-sm text-slate-700 leading-5">{option.text}</span>{showCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto shrink-0" />}{showWrong && <XCircle className="w-5 h-5 text-rose-500 ml-auto shrink-0" />}</button>; })}</div>{!wasChecked && <div className="mt-4 flex justify-end"><button onClick={() => reviewPractice(activeStep, index)} disabled={!selected} className="px-4 py-2.5 rounded-xl bg-teal-600 text-white text-sm font-semibold disabled:opacity-35">Prüfen</button></div>}{wasChecked && <div className={`mt-4 rounded-xl border p-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'}`}><div className={`flex items-center gap-2 font-bold text-sm mb-1.5 ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>{isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}{isCorrect ? 'Richtig' : 'Nicht richtig'}</div>{!isCorrect && correctOption && <p className="text-sm text-slate-600 mb-2"><strong>Richtige Antwort:</strong> {correctOption.text}</p>}<p className="text-sm text-slate-600 leading-6">{check.explanation}</p></div>}</div>;
+                        const correctOptions = check.options.filter(option => option.correct);
+                        const selectedIds = new Set(Array.isArray(selected) ? selected : selected ? [selected] : []);
+                        return <div key={key} className="rounded-2xl bg-white border border-teal-100 p-4 sm:p-5 shadow-sm"><div className="flex items-start gap-3 mb-4"><div className={`w-8 h-8 rounded-xl flex items-center justify-center shrink-0 text-sm font-bold ${wasChecked && isCorrect ? 'bg-emerald-100 text-emerald-600' : 'bg-teal-100 text-teal-700'}`}>{wasChecked && isCorrect ? <Check className="w-4 h-4" /> : index + 1}</div><div><p className="text-sm sm:text-base font-semibold text-slate-800 leading-6">{check.question}</p>{check.multiple && <p className="text-xs font-semibold text-violet-600 mt-1">Mehrere Antworten möglich · alle richtigen auswählen</p>}</div></div><div className="space-y-2.5">{check.options.map(option => { const chosen = selectedIds.has(option.id); const showCorrect = wasChecked && option.correct; const showWrong = wasChecked && chosen && !option.correct; return <button key={option.id} onClick={() => choosePractice(activeStep, index, option.id)} className={`w-full flex items-start gap-3 p-3.5 sm:p-4 rounded-xl border-2 text-left ${showCorrect ? 'border-emerald-400 bg-emerald-50' : showWrong ? 'border-rose-400 bg-rose-50' : chosen ? 'border-teal-500 bg-teal-50' : 'border-slate-200 hover:border-teal-300'}`}><span className={`mt-0.5 w-5 h-5 rounded-md border-2 shrink-0 ${chosen ? 'border-teal-600 bg-teal-600' : 'border-slate-300'}`} /><span className="text-sm text-slate-700 leading-5">{option.text}</span>{showCorrect && <CheckCircle2 className="w-5 h-5 text-emerald-500 ml-auto shrink-0" />}{showWrong && <XCircle className="w-5 h-5 text-rose-500 ml-auto shrink-0" />}</button>; })}</div>{!wasChecked && <div className="mt-4 flex justify-end"><button onClick={() => reviewPractice(activeStep, index)} disabled={Array.isArray(selected) ? selected.length === 0 : !selected} className="px-4 py-2.5 rounded-xl bg-teal-600 text-white text-sm font-semibold disabled:opacity-35">Prüfen</button></div>}{wasChecked && <div className={`mt-4 rounded-xl border p-4 ${isCorrect ? 'border-emerald-300 bg-emerald-50' : 'border-rose-300 bg-rose-50'}`}><div className={`flex items-center gap-2 font-bold text-sm mb-1.5 ${isCorrect ? 'text-emerald-700' : 'text-rose-700'}`}>{isCorrect ? <CheckCircle2 className="w-5 h-5" /> : <XCircle className="w-5 h-5" />}{isCorrect ? 'Richtig' : 'Nicht richtig'}</div>{!isCorrect && correctOptions.length > 0 && <p className="text-sm text-slate-600 mb-2"><strong>{check.multiple ? 'Richtige Antworten:' : 'Richtige Antwort:'}</strong> {correctOptions.map(option => option.text).join(' · ')}</p>}<p className="text-sm text-slate-600 leading-6">{check.explanation}</p></div>}</div>;
                       })}
                     </div>
                   </section>

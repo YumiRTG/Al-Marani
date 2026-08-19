@@ -1,10 +1,10 @@
 import type { LearningModule, TopicContent } from '@/types';
 
-type PracticePair = { question: string; solution: string };
+type PracticePair = { question: string; solution: string | string[]; distractors?: string[] };
 
 const practice = (title: string, items: PracticePair[]): TopicContent[] => [
   { type: 'heading', title: `✍️ Kurz üben – ${title}` },
-  { type: 'list', items: items.map(item => `${item.question}|||${item.solution}`) },
+  { type: 'list', items: items.map(item => [item.question, (Array.isArray(item.solution) ? item.solution : [item.solution]).join('&&&'), ...(item.distractors || [])].join('|||')) },
 ];
 
 const content: TopicContent[] = [
@@ -92,9 +92,9 @@ const content: TopicContent[] = [
     ],
   },
   ...practice('TNM', [
-    { question: 'Wofür stehen T, N und M?', solution: 'T beschreibt den Primärtumor, N die regionalen Lymphknoten und M mögliche Fernmetastasen.' },
-    { question: 'Was bedeutet M0 grundsätzlich?', solution: 'M0 bedeutet, dass keine Fernmetastasen nachgewiesen wurden.' },
-    { question: 'Was sagt das p in einer Angabe wie pT2 aus?', solution: 'Das p zeigt, dass die Einteilung auf einer pathologischen beziehungsweise feingeweblichen Untersuchung beruht.' },
+    { question: 'Welche Aussagen zum TNM-System sind richtig?', solution: ['T beschreibt Größe oder örtliche Ausdehnung des Primärtumors.', 'N beschreibt den Befall regionaler Lymphknoten.', 'M beschreibt das Vorliegen von Fernmetastasen.'], distractors: ['T beschreibt ausschließlich Fernmetastasen.', 'N steht für Nebenwirkungen der Therapie.'] },
+    { question: 'Welche Aussage beschreibt M0 richtig?', solution: 'Es wurden keine Fernmetastasen nachgewiesen.', distractors: ['Fernmetastasen wurden sicher nachgewiesen.', 'Regionale Lymphknoten sind zwingend befallen.', 'Der Primärtumor ist nicht vorhanden.'] },
+    { question: 'Wofür steht das vorangestellte p bei einer Angabe wie pT2?', solution: 'Die Einteilung beruht auf einer pathologischen beziehungsweise feingeweblichen Untersuchung.', distractors: ['Die Erkrankung ist grundsätzlich palliativ.', 'Es wurden sicher Fernmetastasen gefunden.', 'Die Einteilung basiert ausschließlich auf einer Blutuntersuchung.'] },
   ]),
 
   { type: 'video', title: 'Darmkrebs: Wie wird die Diagnose gestellt?', source: 'Stiftung Gesundheitswissen', duration: 'Kurzvideo', caption: 'Achte darauf, wie aus einem Verdacht schrittweise eine gesicherte Diagnose und eine Einschätzung der Ausbreitung wird.', embedUrl: 'https://www.youtube-nocookie.com/embed/xfsoz9Bixig' },
@@ -114,9 +114,9 @@ const content: TopicContent[] = [
     ],
   },
   ...practice('Therapie verstehen', [
-    { question: 'Welche zwei Verfahren wirken vor allem lokal?', solution: 'Operation und Strahlentherapie wirken vor allem lokal an einer bestimmten Körperstelle.' },
-    { question: 'Was bedeutet „systemische Therapie“?', solution: 'Eine systemische Therapie wirkt über den Blutweg im ganzen Körper und kann Krebszellen an verschiedenen Stellen erreichen.' },
-    { question: 'Warum erhalten nicht alle Menschen mit Krebs dieselbe Behandlung?', solution: 'Die Behandlung hängt unter anderem von Tumorart, Ausbreitung, Lage, biologischen Eigenschaften und Allgemeinzustand ab.' },
+    { question: 'Welche Verfahren wirken vor allem lokal?', solution: ['Operation', 'Strahlentherapie'], distractors: ['Systemische Chemotherapie', 'Eine im ganzen Körper wirkende Immuntherapie'] },
+    { question: 'Was bedeutet „systemisch“ bei einer Krebstherapie?', solution: 'Die Behandlung wirkt über den Blutkreislauf im ganzen Körper und kann dadurch Krebszellen an verschiedenen Stellen erreichen.', distractors: ['Die Behandlung wirkt nur an einer einzigen Körperstelle.', 'Es handelt sich immer ausschließlich um eine Operation.', 'Die Behandlung betrifft nur die Hautoberfläche.'] },
+    { question: 'Welche Faktoren beeinflussen die Wahl der Krebstherapie?', solution: ['Tumorart und Ausbreitung', 'Lage und biologische Eigenschaften der Krebszellen', 'Allgemeinzustand der erkrankten Person'], distractors: ['Nur der Wochentag der Diagnose', 'Ausschließlich die Haarfarbe der erkrankten Person'] },
   ]),
 
   { type: 'heading', title: '6.6 Tumoren im Verdauungstrakt – typische Warnzeichen einordnen' },
@@ -131,9 +131,9 @@ const content: TopicContent[] = [
   },
   ...practice('Tumoren im Verdauungstrakt', [
     { question: 'Welches Warnzeichen kann bei einem Ösophaguskarzinom auftreten?', solution: 'Länger bestehende Schluckbeschwerden können ein Warnzeichen für ein Ösophaguskarzinom sein.' },
-    { question: 'Welche Beschwerden können bei Magenkrebs auftreten?', solution: 'Möglich sind zum Beispiel anhaltende Oberbauchbeschwerden, Übelkeit, Appetitmangel oder Gewichtsverlust.' },
-    { question: 'Welche Veränderungen können bei Darmkrebs auffallen?', solution: 'Möglich sind zum Beispiel Blut im Stuhl, länger veränderte Stuhlgewohnheiten oder anhaltende Bauchbeschwerden.' },
-    { question: 'Warum darf ein einzelnes Symptom nicht mit einer sicheren Krebsdiagnose gleichgesetzt werden?', solution: 'Die Beschwerden sind oft unspezifisch und müssen im Gesamtbild ärztlich abgeklärt werden.' },
+    { question: 'Welche Beschwerden können bei Magenkrebs auftreten?', solution: ['Anhaltende Oberbauchbeschwerden', 'Übelkeit oder Appetitmangel', 'Unbeabsichtigter Gewichtsverlust'], distractors: ['Jede betroffene Person hat zwingend dieselben Beschwerden.', 'Ein einzelnes Symptom beweist bereits sicher Magenkrebs.'] },
+    { question: 'Welche Veränderungen können bei Darmkrebs auffallen?', solution: ['Blut im Stuhl', 'Länger veränderte Stuhlgewohnheiten', 'Anhaltende Bauchbeschwerden'], distractors: ['Darmkrebs verursacht grundsätzlich nie Beschwerden.', 'Eine Veränderung beweist ohne weitere Diagnostik sicher die Diagnose.'] },
+    { question: 'Warum reicht ein einzelnes Symptom nicht für eine sichere Krebsdiagnose?', solution: 'Viele Beschwerden sind unspezifisch und müssen zusammen mit weiteren Befunden ärztlich abgeklärt werden.', distractors: ['Ein einzelnes Symptom reicht immer für eine sichere Diagnose.', 'Bei Krebs spielen weitere Untersuchungen grundsätzlich keine Rolle.'] },
   ]),
 ];
 
