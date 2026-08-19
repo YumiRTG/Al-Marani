@@ -1,8 +1,10 @@
 import type { LearningModule, TopicContent } from '@/types';
 
-const practice = (title: string, items: string[]): TopicContent[] => [
+type PracticePair = { question: string; solution: string };
+
+const practice = (title: string, items: PracticePair[]): TopicContent[] => [
   { type: 'heading', title: `✍️ Kurz üben – ${title}` },
-  { type: 'list', items },
+  { type: 'list', items: items.map(item => `${item.question}|||${item.solution}`) },
 ];
 
 const content: TopicContent[] = [
@@ -38,9 +40,9 @@ const content: TopicContent[] = [
     ],
   },
   ...practice('gutartig oder bösartig?', [
-    'Welche Eigenschaft spricht besonders für einen malignen Tumor?',
-    'Warum kann auch ein gutartiger Tumor Beschwerden verursachen?',
-    'Erkläre in einem Satz, warum „Tumor“ und „Krebs“ keine Synonyme sind.',
+    { question: 'Welche Eigenschaft spricht besonders für einen malignen Tumor?', solution: 'Ein maligner Tumor kann in benachbartes Gewebe einwachsen und Metastasen bilden.' },
+    { question: 'Warum kann auch ein gutartiger Tumor Beschwerden verursachen?', solution: 'Ein gutartiger Tumor kann durch seine Größe oder Lage Druck auf umliegende Strukturen ausüben.' },
+    { question: 'Warum sind „Tumor“ und „Krebs“ keine Synonyme?', solution: 'Ein Tumor kann gutartig oder bösartig sein; Krebs bezeichnet bösartige Tumorerkrankungen.' },
   ]),
 
   { type: 'heading', title: '6.2 Wie kann Krebs entstehen?' },
@@ -54,9 +56,9 @@ const content: TopicContent[] = [
     text: 'Veränderung der Zellsteuerung → unkontrolliertes Wachstum → bösartiger Tumor → mögliches Einwachsen in Gewebe → mögliche Metastasen.',
   },
   ...practice('Krebsentstehung', [
-    'Warum bedeutet ein Risikofaktor nicht, dass eine Person sicher Krebs bekommt?',
-    'Was ist mit „unkontrolliertem Zellwachstum“ gemeint?',
-    'Bringe die Begriffe Zellveränderung, Tumorwachstum, Invasion und Metastase in eine sinnvolle Reihenfolge.',
+    { question: 'Warum bedeutet ein Risikofaktor nicht, dass eine Person sicher Krebs bekommt?', solution: 'Ein Risikofaktor erhöht die Wahrscheinlichkeit einer Erkrankung, führt aber nicht automatisch zu Krebs.' },
+    { question: 'Was ist mit „unkontrolliertem Zellwachstum“ gemeint?', solution: 'Zellen teilen sich weiter, obwohl normale Steuermechanismen die Teilung eigentlich begrenzen oder stoppen sollten.' },
+    { question: 'Welche Reihenfolge beschreibt die Krebsentstehung vereinfacht richtig?', solution: 'Zellveränderung → unkontrolliertes Wachstum → bösartiger Tumor → mögliches Einwachsen → mögliche Metastasen.' },
   ]),
 
   { type: 'heading', title: '6.3 Primärtumor und Metastasen – wo hat der Krebs begonnen?' },
@@ -70,9 +72,9 @@ const content: TopicContent[] = [
     text: '„Tumor in der Leber“ sagt allein noch nicht, wo die Erkrankung begonnen hat. Es kann sich um einen primären Lebertumor oder um eine Metastase einer anderen Krebserkrankung handeln.',
   },
   ...practice('Primärtumor und Metastase', [
-    'Was ist ein Primärtumor?',
-    'Was ist eine Metastase?',
-    'Warum bleibt eine Lebermetastase eines Darmkarzinoms biologisch Darmkrebs?',
+    { question: 'Was ist ein Primärtumor?', solution: 'Der Primärtumor ist der ursprüngliche Krebsherd, an dem die Krebserkrankung entstanden ist.' },
+    { question: 'Was ist eine Metastase?', solution: 'Eine Metastase ist eine Absiedlung von Krebszellen an einer anderen Stelle im Körper.' },
+    { question: 'Warum bleibt eine Lebermetastase eines Darmkarzinoms biologisch Darmkrebs?', solution: 'Weil die Metastase aus Darmkrebszellen besteht, auch wenn sie sich in der Leber befindet.' },
   ]),
 
   { type: 'heading', title: '6.4 TNM-System – wie weit hat sich die Erkrankung ausgebreitet?' },
@@ -90,9 +92,9 @@ const content: TopicContent[] = [
     ],
   },
   ...practice('TNM', [
-    'Wofür stehen T, N und M?',
-    'Was bedeutet M0 grundsätzlich?',
-    'Was sagt das p in einer Angabe wie pT2 aus?',
+    { question: 'Wofür stehen T, N und M?', solution: 'T beschreibt den Primärtumor, N die regionalen Lymphknoten und M mögliche Fernmetastasen.' },
+    { question: 'Was bedeutet M0 grundsätzlich?', solution: 'M0 bedeutet, dass keine Fernmetastasen nachgewiesen wurden.' },
+    { question: 'Was sagt das p in einer Angabe wie pT2 aus?', solution: 'Das p zeigt, dass die Einteilung auf einer pathologischen beziehungsweise feingeweblichen Untersuchung beruht.' },
   ]),
 
   { type: 'video', title: 'Darmkrebs: Wie wird die Diagnose gestellt?', source: 'Stiftung Gesundheitswissen', duration: 'Kurzvideo', caption: 'Achte darauf, wie aus einem Verdacht schrittweise eine gesicherte Diagnose und eine Einschätzung der Ausbreitung wird.', embedUrl: 'https://www.youtube-nocookie.com/embed/xfsoz9Bixig' },
@@ -112,9 +114,9 @@ const content: TopicContent[] = [
     ],
   },
   ...practice('Therapie verstehen', [
-    'Welche zwei Verfahren wirken vor allem lokal?',
-    'Was bedeutet „systemische Therapie“?',
-    'Warum erhalten nicht alle Menschen mit Krebs dieselbe Behandlung?',
+    { question: 'Welche zwei Verfahren wirken vor allem lokal?', solution: 'Operation und Strahlentherapie wirken vor allem lokal an einer bestimmten Körperstelle.' },
+    { question: 'Was bedeutet „systemische Therapie“?', solution: 'Eine systemische Therapie wirkt über den Blutweg im ganzen Körper und kann Krebszellen an verschiedenen Stellen erreichen.' },
+    { question: 'Warum erhalten nicht alle Menschen mit Krebs dieselbe Behandlung?', solution: 'Die Behandlung hängt unter anderem von Tumorart, Ausbreitung, Lage, biologischen Eigenschaften und Allgemeinzustand ab.' },
   ]),
 
   { type: 'heading', title: '6.6 Tumoren im Verdauungstrakt – typische Warnzeichen einordnen' },
@@ -128,10 +130,10 @@ const content: TopicContent[] = [
     text: 'Die Aufgabe besteht nicht darin, aus einem Symptom selbst eine Krebsdiagnose zu stellen. Wichtig sind genaue Anamnese, das Erkennen von Warnzeichen, eine passende Terminsteuerung und die zuverlässige Vorbereitung weiterer Diagnostik.',
   },
   ...practice('Tumoren im Verdauungstrakt', [
-    'Welche Warnzeichen können bei einem Ösophaguskarzinom auftreten?',
-    'Nenne zwei mögliche Beschwerden bei Magenkrebs.',
-    'Welche Veränderungen können bei Darmkrebs auffallen?',
-    'Warum darf ein einzelnes Symptom nicht mit einer sicheren Krebsdiagnose gleichgesetzt werden?',
+    { question: 'Welches Warnzeichen kann bei einem Ösophaguskarzinom auftreten?', solution: 'Länger bestehende Schluckbeschwerden können ein Warnzeichen für ein Ösophaguskarzinom sein.' },
+    { question: 'Welche Beschwerden können bei Magenkrebs auftreten?', solution: 'Möglich sind zum Beispiel anhaltende Oberbauchbeschwerden, Übelkeit, Appetitmangel oder Gewichtsverlust.' },
+    { question: 'Welche Veränderungen können bei Darmkrebs auffallen?', solution: 'Möglich sind zum Beispiel Blut im Stuhl, länger veränderte Stuhlgewohnheiten oder anhaltende Bauchbeschwerden.' },
+    { question: 'Warum darf ein einzelnes Symptom nicht mit einer sicheren Krebsdiagnose gleichgesetzt werden?', solution: 'Die Beschwerden sind oft unspezifisch und müssen im Gesamtbild ärztlich abgeklärt werden.' },
   ]),
 ];
 
