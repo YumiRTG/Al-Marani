@@ -1,0 +1,34 @@
+name: LF9 full quality build check
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/lf9-full-quality-check.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Install
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+      - name: Build
+        run: npm run build
+      - name: Record success
+        run: |
+          echo "LF9 full manual quality build successful" > public/.lf9-full-quality-ok
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/.lf9-full-quality-ok
+          git commit -m "Verify LF9 full manual quality build"
+          git push
