@@ -2,7 +2,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { BookOpen, Bone } from 'lucide-react';
 import { Dashboard } from '@/pages/Dashboard';
 import { ModuleDetail } from '@/pages/ModuleDetailV4';
-import { SkeletonPageV6 } from '@/pages/SkeletonPageV6';
+import { SkeletonPageV7 } from '@/pages/SkeletonPageV7';
 import { modules } from '@/data';
 import type { LearningResult } from '@/types';
 
@@ -151,7 +151,7 @@ function App() {
         />
       )}
       {state.page === 'skeleton' && (
-        <SkeletonPageV6 onBack={handleBackToDashboard} />
+        <SkeletonPageV7 onBack={handleBackToDashboard} />
       )}
     </div>
   );
