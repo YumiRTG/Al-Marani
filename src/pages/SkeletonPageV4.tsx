@@ -11,6 +11,7 @@ interface Fix {
   points: Point[];
   image?: string;
   hide?: number[];
+  hideLegend?: number[];
   badges?: string[];
   note?: string;
 }
@@ -23,7 +24,7 @@ const fixes: Record<string, Fix> = {
   'Hirnschädel – Rückseite': { crop:[320,20,320,260], sourceW:960, sourceH:2256, points:[[520,105],[480,165],[555,195]] },
   'Gesichtsschädel': { crop:[455,155,235,205], sourceW:1280, sourceH:2599, points:[[560,220],[535,280],[560,335],[645,250],[535,215],[560,248],[560,265]] },
   'Halswirbelsäule': { crop:[465,345,190,190], sourceW:1280, sourceH:2599, points:[[560,370],[560,400],[560,455]] },
-  'Brustkorb': { crop:[330,490,540,430], sourceW:1280, sourceH:2599, points:[[560,665],[430,690],[560,850]], hide:[2], note:'Brustbein und Rippen sind hier direkt markiert. Die Brustwirbel lernst du in der Rückansicht darunter, weil sie dort eindeutig sichtbar sind.' },
+  'Brustkorb': { crop:[330,490,540,430], sourceW:1280, sourceH:2599, points:[[560,665],[430,690],[560,850]], hide:[2], hideLegend:[2], note:'Brustbein und Rippen sind hier direkt markiert. Die Brustwirbel lernst du in der Rückansicht darunter, weil sie dort eindeutig sichtbar sind.' },
   'Wirbelsäule von hinten': { crop:[380,250,200,850], sourceW:960, sourceH:2256, points:[[480,320],[480,580],[480,830],[480,1000],[480,1060]] },
   'Schultergürtel': { crop:[260,475,640,190], sourceW:1280, sourceH:2599, points:[[430,505],[800,560]] },
   'Oberarm': { crop:[190,555,150,410], sourceW:1280, sourceH:2599, points:[[285,760]] },
@@ -76,16 +77,14 @@ function applyRegion(article: HTMLElement, fix: Fix) {
   const layout=svg.parentElement;
   const legend=layout?.children[1] as HTMLElement | undefined;
   if (legend) Array.from(legend.children).forEach((card,i)=>{
-    (card as HTMLElement).style.display=fix.hide?.includes(i)?'none':'';
+    (card as HTMLElement).style.display=fix.hideLegend?.includes(i)?'none':'';
     const badge=card.querySelector('span');
     if (badge && fix.badges?.[i]) badge.textContent=fix.badges[i];
   });
 
   const h3=article.querySelector('h3');
   const p=h3?.nextElementSibling as HTMLElement | null;
-  if (fix.note) {
-    if (p?.tagName.toLowerCase()==='p') p.textContent=fix.note;
-  }
+  if (fix.note && p?.tagName.toLowerCase()==='p') p.textContent=fix.note;
 }
 
 function applyBack(root: HTMLElement) {
