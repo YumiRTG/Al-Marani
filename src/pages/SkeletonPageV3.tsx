@@ -43,7 +43,7 @@ const I = {
   back:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
   front:
-    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no_color.svg/1280px-Human_skeleton_front_no-text_no_color.svg.png',
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/1280px-Human_skeleton_front_no-text_no-color.svg.png',
   frontNumbered:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Human_skeleton_front_numbered.svg/1920px-Human_skeleton_front_numbered.svg.png',
 } as const;
