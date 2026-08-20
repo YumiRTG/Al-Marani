@@ -20,12 +20,12 @@ interface Props {
 
 interface Callout {
   label: string;
-  latin: string;
+  latin?: string;
   point: [number, number];
-  box: [number, number];
+  labelY: number;
 }
 
-interface DetailView {
+interface Region {
   title: string;
   intro: string;
   image: string;
@@ -35,109 +35,241 @@ interface DetailView {
 }
 
 const I = {
-  frontLabeled: 'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Human_skeleton_front_de.svg/1280px-Human_skeleton_front_de.svg.png',
-  backLabeled: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
-  front: 'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/1280px-Human_skeleton_front_no-text_no-color.svg.png',
-  back: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
-  frontNumbered: 'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Human_skeleton_front_numbered.svg/1920px-Human_skeleton_front_numbered.svg.png',
-  backNumbered: 'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
+  frontLabeled:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/0/0d/Human_skeleton_front_de.svg/1280px-Human_skeleton_front_de.svg.png',
+  backLabeled:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
+  front:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Human_skeleton_front_no-text_no-color.svg/1280px-Human_skeleton_front_no-text_no-color.svg.png',
+  back:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
+  frontNumbered:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Human_skeleton_front_numbered.svg/1920px-Human_skeleton_front_numbered.svg.png',
+  backNumbered:
+    'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
 };
 
-const regions = [
-  ['Hirnschädel', I.front, 3.25, '50% 5%', ['Stirnbein · Os frontale', 'Scheitelbein · Os parietale', 'Schläfenbein · Os temporale', 'Hinterhauptbein · Os occipitale', 'Keilbein · Os sphenoidale', 'Siebbein · Os ethmoidale']],
-  ['Gesichtsschädel', I.front, 3.55, '50% 10%', ['Oberkiefer · Maxilla', 'Unterkiefer · Mandibula', 'Jochbein · Os zygomaticum', 'Nasenbein · Os nasale', 'Tränenbein · Os lacrimale', 'Gaumenbein · Os palatinum', 'Untere Nasenmuschel · Concha nasalis inferior', 'Pflugscharbein · Vomer']],
-  ['Halswirbelsäule', I.front, 3.35, '50% 18%', ['Atlas · C1', 'Axis · C2', 'Halswirbel C1–C7 · Vertebrae cervicales']],
-  ['Brustkorb', I.front, 2.05, '50% 33%', ['Brustbein · Sternum', 'Rippen · Costae', 'Brustwirbel · Vertebrae thoracicae']],
-  ['Wirbelsäule von hinten', I.back, 1.92, '50% 42%', ['Halswirbel · Vertebrae cervicales', 'Brustwirbel · Vertebrae thoracicae', 'Lendenwirbel · Vertebrae lumbales', 'Kreuzbein · Os sacrum', 'Steißbein · Os coccygis']],
-  ['Schultergürtel', I.front, 2.3, '50% 27%', ['Schlüsselbein · Clavicula', 'Schulterblatt · Scapula']],
-  ['Oberarm', I.front, 2.75, '15% 37%', ['Oberarmknochen · Humerus']],
-  ['Unterarm', I.front, 2.8, '13% 50%', ['Speiche · Radius', 'Elle · Ulna']],
-  ['Handwurzel', I.front, 3.45, '10% 61%', ['Kahnbein · Os scaphoideum', 'Mondbein · Os lunatum', 'Dreiecksbein · Os triquetrum', 'Erbsenbein · Os pisiforme', 'Großes Vieleckbein · Os trapezium', 'Kleines Vieleckbein · Os trapezoideum', 'Kopfbein · Os capitatum', 'Hakenbein · Os hamatum']],
-  ['Mittelhand und Finger', I.front, 3.1, '10% 64%', ['Mittelhandknochen I–V · Ossa metacarpi', 'Grundphalangen · Phalanges proximales', 'Mittelphalangen · Phalanges mediae', 'Endphalangen · Phalanges distales']],
-  ['Becken', I.front, 2.35, '50% 56%', ['Hüftbein · Os coxae', 'Darmbein · Os ilium', 'Sitzbein · Os ischii', 'Schambein · Os pubis', 'Kreuzbein · Os sacrum']],
-  ['Oberschenkel', I.front, 2.15, '50% 68%', ['Oberschenkelknochen · Femur']],
-  ['Knie', I.front, 3.15, '50% 77%', ['Kniescheibe · Patella', 'Femur', 'Tibia']],
-  ['Unterschenkel', I.front, 2.35, '50% 87%', ['Schienbein · Tibia', 'Wadenbein · Fibula']],
-  ['Fußwurzel', I.front, 3.4, '50% 96%', ['Sprungbein · Talus', 'Fersenbein · Calcaneus', 'Kahnbein · Os naviculare', 'Würfelbein · Os cuboideum', 'Mediales Keilbein · Os cuneiforme mediale', 'Mittleres Keilbein · Os cuneiforme intermedium', 'Laterales Keilbein · Os cuneiforme laterale']],
-  ['Mittelfuß', I.front, 3.2, '50% 98%', ['Mittelfußknochen I–V · Ossa metatarsi']],
-  ['Zehen', I.front, 3.65, '50% 99%', ['Grundphalangen · Phalanges proximales', 'Mittelphalangen · Phalanges mediae', 'Endphalangen · Phalanges distales']],
-  ['Ferse und hinterer Fuß', I.back, 3.3, '50% 98%', ['Fersenbein · Calcaneus', 'Fußwurzelknochen · Ossa tarsi']],
-] as const;
-
-const detailViews: DetailView[] = [
+const regions: Region[] = [
   {
     title: 'Hirnschädel',
-    intro: 'Hier siehst du die wichtigsten Knochen des Hirnschädels noch einmal mit Pfeilen direkt am Schädel.',
+    intro: 'Die Pfeile zeigen dir direkt, wo die einzelnen Knochen am Schädel liegen.',
     image: I.front,
     backgroundSize: '185% auto',
     backgroundPosition: '48% 4%',
     callouts: [
-      { label: 'Stirnbein', latin: 'Os frontale', point: [35, 28], box: [70, 14] },
-      { label: 'Scheitelbein', latin: 'Os parietale', point: [45, 18], box: [70, 28] },
-      { label: 'Schläfenbein', latin: 'Os temporale', point: [54, 39], box: [70, 42] },
-      { label: 'Hinterhauptbein', latin: 'Os occipitale', point: [42, 55], box: [70, 56] },
-      { label: 'Keilbein', latin: 'Os sphenoidale', point: [47, 46], box: [70, 70] },
-      { label: 'Siebbein', latin: 'Os ethmoidale', point: [42, 47], box: [70, 84] },
+      { label: 'Stirnbein', latin: 'Os frontale', point: [31, 25], labelY: 12 },
+      { label: 'Scheitelbein', latin: 'Os parietale', point: [40, 14], labelY: 27 },
+      { label: 'Schläfenbein', latin: 'Os temporale', point: [49, 39], labelY: 42 },
+      { label: 'Hinterhauptbein', latin: 'Os occipitale', point: [40, 56], labelY: 57 },
+      { label: 'Keilbein', latin: 'Os sphenoidale', point: [44, 45], labelY: 72 },
+      { label: 'Siebbein', latin: 'Os ethmoidale', point: [39, 47], labelY: 87 },
     ],
   },
   {
     title: 'Gesichtsschädel',
-    intro: 'Hier kannst du die Knochen des Gesichts gezielt ansehen und ihre Lage besser unterscheiden.',
+    intro: 'Hier kannst du Kiefer, Nasenbereich und Jochbein direkt am Gesichtsschädel zuordnen.',
     image: I.front,
     backgroundSize: '195% auto',
     backgroundPosition: '50% 10%',
     callouts: [
-      { label: 'Nasenbein', latin: 'Os nasale', point: [43, 42], box: [70, 17] },
-      { label: 'Oberkiefer', latin: 'Maxilla', point: [40, 54], box: [70, 32] },
-      { label: 'Unterkiefer', latin: 'Mandibula', point: [48, 70], box: [70, 47] },
-      { label: 'Jochbein', latin: 'Os zygomaticum', point: [58, 50], box: [70, 62] },
-      { label: 'Tränenbein', latin: 'Os lacrimale', point: [47, 45], box: [70, 76] },
-      { label: 'Gaumenbein', latin: 'Os palatinum', point: [43, 59], box: [70, 90] },
+      { label: 'Nasenbein', latin: 'Os nasale', point: [40, 40], labelY: 8 },
+      { label: 'Oberkiefer', latin: 'Maxilla', point: [38, 53], labelY: 20 },
+      { label: 'Unterkiefer', latin: 'Mandibula', point: [44, 70], labelY: 32 },
+      { label: 'Jochbein', latin: 'Os zygomaticum', point: [51, 49], labelY: 44 },
+      { label: 'Tränenbein', latin: 'Os lacrimale', point: [43, 44], labelY: 56 },
+      { label: 'Gaumenbein', latin: 'Os palatinum', point: [40, 59], labelY: 68 },
+      { label: 'Untere Nasenmuschel', latin: 'Concha nasalis inferior', point: [42, 50], labelY: 80 },
+      { label: 'Pflugscharbein', latin: 'Vomer', point: [40, 55], labelY: 92 },
     ],
   },
   {
-    title: 'Atlas, Axis und Halswirbelsäule',
-    intro: 'Atlas und Axis sind die ersten beiden Halswirbel. Diese Ansicht hilft dir, sie im oberen Bereich der Wirbelsäule einzuordnen.',
+    title: 'Halswirbelsäule',
+    intro: 'Atlas und Axis sind die ersten beiden Halswirbel. Die Pfeile zeigen ihre Lage direkt unter dem Schädel.',
     image: I.front,
     backgroundSize: '205% auto',
     backgroundPosition: '50% 19%',
     callouts: [
-      { label: 'Atlas', latin: 'C1', point: [46, 28], box: [70, 30] },
-      { label: 'Axis', latin: 'C2', point: [46, 37], box: [70, 51] },
-      { label: 'Halswirbel', latin: 'Vertebrae cervicales', point: [46, 53], box: [70, 73] },
+      { label: 'Atlas', latin: 'C1', point: [42, 27], labelY: 25 },
+      { label: 'Axis', latin: 'C2', point: [42, 36], labelY: 48 },
+      { label: 'Halswirbel C1–C7', latin: 'Vertebrae cervicales', point: [42, 53], labelY: 73 },
+    ],
+  },
+  {
+    title: 'Brustkorb',
+    intro: 'Brustbein und Rippen schützen Herz und Lunge. Die Brustwirbel liegen hinten in der Mitte.',
+    image: I.front,
+    backgroundSize: '155% auto',
+    backgroundPosition: '50% 31%',
+    callouts: [
+      { label: 'Brustbein', latin: 'Sternum', point: [41, 46], labelY: 25 },
+      { label: 'Rippen', latin: 'Costae', point: [30, 45], labelY: 50 },
+      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', point: [42, 50], labelY: 75 },
+    ],
+  },
+  {
+    title: 'Wirbelsäule von hinten',
+    intro: 'Von hinten kannst du die Abschnitte der Wirbelsäule besonders gut von oben nach unten verfolgen.',
+    image: I.back,
+    backgroundSize: '145% auto',
+    backgroundPosition: '50% 42%',
+    callouts: [
+      { label: 'Halswirbel', latin: 'Vertebrae cervicales', point: [41, 17], labelY: 12 },
+      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', point: [41, 37], labelY: 30 },
+      { label: 'Lendenwirbel', latin: 'Vertebrae lumbales', point: [41, 58], labelY: 49 },
+      { label: 'Kreuzbein', latin: 'Os sacrum', point: [41, 72], labelY: 68 },
+      { label: 'Steißbein', latin: 'Os coccygis', point: [41, 79], labelY: 86 },
+    ],
+  },
+  {
+    title: 'Schultergürtel',
+    intro: 'Schlüsselbein und Schulterblatt verbinden die obere Extremität mit dem Rumpf.',
+    image: I.front,
+    backgroundSize: '175% auto',
+    backgroundPosition: '50% 27%',
+    callouts: [
+      { label: 'Schlüsselbein', latin: 'Clavicula', point: [33, 28], labelY: 35 },
+      { label: 'Schulterblatt', latin: 'Scapula', point: [49, 38], labelY: 65 },
+    ],
+  },
+  {
+    title: 'Oberarm',
+    intro: 'Im Oberarm liegt nur ein Knochen: der Humerus.',
+    image: I.front,
+    backgroundSize: '220% auto',
+    backgroundPosition: '8% 38%',
+    callouts: [{ label: 'Oberarmknochen', latin: 'Humerus', point: [31, 49], labelY: 50 }],
+  },
+  {
+    title: 'Unterarm',
+    intro: 'Im Unterarm liegen Radius und Ulna nebeneinander. Der Radius liegt auf der Daumenseite.',
+    image: I.front,
+    backgroundSize: '225% auto',
+    backgroundPosition: '7% 51%',
+    callouts: [
+      { label: 'Speiche', latin: 'Radius', point: [27, 45], labelY: 37 },
+      { label: 'Elle', latin: 'Ulna', point: [34, 48], labelY: 64 },
     ],
   },
   {
     title: 'Handwurzel',
-    intro: 'Die acht Handwurzelknochen sind klein und liegen dicht zusammen. Mit den Pfeilen kannst du sie einzeln zuordnen.',
+    intro: 'Die acht Handwurzelknochen liegen dicht zusammen. Die Pfeile helfen dir, sie einzeln zu erkennen.',
     image: I.front,
-    backgroundSize: '255% auto',
-    backgroundPosition: '8% 61%',
+    backgroundSize: '260% auto',
+    backgroundPosition: '7% 61%',
     callouts: [
-      { label: 'Kahnbein', latin: 'Os scaphoideum', point: [23, 37], box: [64, 12] },
-      { label: 'Mondbein', latin: 'Os lunatum', point: [28, 37], box: [64, 23] },
-      { label: 'Dreiecksbein', latin: 'Os triquetrum', point: [33, 39], box: [64, 34] },
-      { label: 'Erbsenbein', latin: 'Os pisiforme', point: [36, 42], box: [64, 45] },
-      { label: 'Großes Vieleckbein', latin: 'Os trapezium', point: [23, 49], box: [64, 56] },
-      { label: 'Kleines Vieleckbein', latin: 'Os trapezoideum', point: [28, 49], box: [64, 67] },
-      { label: 'Kopfbein', latin: 'Os capitatum', point: [33, 50], box: [64, 78] },
-      { label: 'Hakenbein', latin: 'Os hamatum', point: [38, 50], box: [64, 89] },
+      { label: 'Kahnbein', latin: 'Os scaphoideum', point: [23, 37], labelY: 8 },
+      { label: 'Mondbein', latin: 'Os lunatum', point: [28, 37], labelY: 20 },
+      { label: 'Dreiecksbein', latin: 'Os triquetrum', point: [33, 39], labelY: 32 },
+      { label: 'Erbsenbein', latin: 'Os pisiforme', point: [36, 42], labelY: 44 },
+      { label: 'Großes Vieleckbein', latin: 'Os trapezium', point: [23, 49], labelY: 56 },
+      { label: 'Kleines Vieleckbein', latin: 'Os trapezoideum', point: [28, 49], labelY: 68 },
+      { label: 'Kopfbein', latin: 'Os capitatum', point: [33, 50], labelY: 80 },
+      { label: 'Hakenbein', latin: 'Os hamatum', point: [38, 50], labelY: 92 },
+    ],
+  },
+  {
+    title: 'Mittelhand und Finger',
+    intro: 'Von der Handwurzel geht es über die Mittelhand bis zu den einzelnen Fingergliedern.',
+    image: I.front,
+    backgroundSize: '250% auto',
+    backgroundPosition: '7% 65%',
+    callouts: [
+      { label: 'Mittelhandknochen I–V', latin: 'Ossa metacarpi', point: [30, 43], labelY: 20 },
+      { label: 'Grundphalangen', latin: 'Phalanges proximales', point: [31, 55], labelY: 42 },
+      { label: 'Mittelphalangen', latin: 'Phalanges mediae', point: [31, 67], labelY: 64 },
+      { label: 'Endphalangen', latin: 'Phalanges distales', point: [31, 80], labelY: 84 },
+    ],
+  },
+  {
+    title: 'Becken',
+    intro: 'Im Becken kannst du Darmbein, Sitzbein und Schambein als Anteile des Hüftbeins unterscheiden.',
+    image: I.front,
+    backgroundSize: '175% auto',
+    backgroundPosition: '50% 57%',
+    callouts: [
+      { label: 'Hüftbein', latin: 'Os coxae', point: [29, 42], labelY: 12 },
+      { label: 'Darmbein', latin: 'Os ilium', point: [27, 34], labelY: 30 },
+      { label: 'Sitzbein', latin: 'Os ischii', point: [31, 58], labelY: 48 },
+      { label: 'Schambein', latin: 'Os pubis', point: [39, 53], labelY: 66 },
+      { label: 'Kreuzbein', latin: 'Os sacrum', point: [42, 42], labelY: 84 },
+    ],
+  },
+  {
+    title: 'Oberschenkel',
+    intro: 'Der Femur ist der größte Knochen des menschlichen Körpers.',
+    image: I.front,
+    backgroundSize: '175% auto',
+    backgroundPosition: '50% 69%',
+    callouts: [{ label: 'Oberschenkelknochen', latin: 'Femur', point: [35, 52], labelY: 50 }],
+  },
+  {
+    title: 'Knie',
+    intro: 'Am Knie treffen Femur und Tibia aufeinander. Vorne liegt die Kniescheibe.',
+    image: I.front,
+    backgroundSize: '240% auto',
+    backgroundPosition: '50% 78%',
+    callouts: [
+      { label: 'Oberschenkelknochen', latin: 'Femur', point: [34, 31], labelY: 25 },
+      { label: 'Kniescheibe', latin: 'Patella', point: [36, 50], labelY: 50 },
+      { label: 'Schienbein', latin: 'Tibia', point: [37, 69], labelY: 75 },
+    ],
+  },
+  {
+    title: 'Unterschenkel',
+    intro: 'Tibia und Fibula verlaufen parallel. Die Tibia ist deutlich kräftiger.',
+    image: I.front,
+    backgroundSize: '175% auto',
+    backgroundPosition: '50% 88%',
+    callouts: [
+      { label: 'Schienbein', latin: 'Tibia', point: [36, 49], labelY: 38 },
+      { label: 'Wadenbein', latin: 'Fibula', point: [45, 49], labelY: 64 },
     ],
   },
   {
     title: 'Fußwurzel',
-    intro: 'Die sieben Fußwurzelknochen bilden den hinteren Teil des Fußskeletts. Hier kannst du sie einzeln vergleichen.',
+    intro: 'Die sieben Fußwurzelknochen bilden den hinteren Teil des Fußes.',
     image: I.front,
     backgroundSize: '190% auto',
     backgroundPosition: '50% 97%',
     callouts: [
-      { label: 'Sprungbein', latin: 'Talus', point: [39, 34], box: [67, 14] },
-      { label: 'Fersenbein', latin: 'Calcaneus', point: [29, 48], box: [67, 27] },
-      { label: 'Kahnbein', latin: 'Os naviculare', point: [49, 44], box: [67, 40] },
-      { label: 'Würfelbein', latin: 'Os cuboideum', point: [55, 56], box: [67, 53] },
-      { label: 'Keilbein medial', latin: 'Os cuneiforme mediale', point: [50, 48], box: [67, 66] },
-      { label: 'Keilbein intermedium', latin: 'Os cuneiforme intermedium', point: [54, 47], box: [67, 79] },
-      { label: 'Keilbein lateral', latin: 'Os cuneiforme laterale', point: [58, 48], box: [67, 92] },
+      { label: 'Sprungbein', latin: 'Talus', point: [38, 34], labelY: 10 },
+      { label: 'Fersenbein', latin: 'Calcaneus', point: [29, 48], labelY: 23 },
+      { label: 'Kahnbein', latin: 'Os naviculare', point: [48, 44], labelY: 36 },
+      { label: 'Würfelbein', latin: 'Os cuboideum', point: [54, 56], labelY: 49 },
+      { label: 'Keilbein medial', latin: 'Os cuneiforme mediale', point: [49, 48], labelY: 62 },
+      { label: 'Keilbein intermedium', latin: 'Os cuneiforme intermedium', point: [53, 47], labelY: 75 },
+      { label: 'Keilbein lateral', latin: 'Os cuneiforme laterale', point: [57, 48], labelY: 88 },
+    ],
+  },
+  {
+    title: 'Mittelfuß',
+    intro: 'Die fünf Mittelfußknochen liegen zwischen Fußwurzel und Zehen.',
+    image: I.front,
+    backgroundSize: '200% auto',
+    backgroundPosition: '50% 99%',
+    callouts: [{ label: 'Mittelfußknochen I–V', latin: 'Ossa metatarsi', point: [43, 55], labelY: 50 }],
+  },
+  {
+    title: 'Zehen',
+    intro: 'Die Zehen bestehen aus Grund-, Mittel- und Endphalangen. Die Großzehe besitzt keine Mittelphalanx.',
+    image: I.front,
+    backgroundSize: '220% auto',
+    backgroundPosition: '50% 100%',
+    callouts: [
+      { label: 'Grundphalangen', latin: 'Phalanges proximales', point: [40, 58], labelY: 25 },
+      { label: 'Mittelphalangen', latin: 'Phalanges mediae', point: [43, 70], labelY: 50 },
+      { label: 'Endphalangen', latin: 'Phalanges distales', point: [45, 82], labelY: 75 },
+    ],
+  },
+  {
+    title: 'Ferse und hinterer Fuß',
+    intro: 'Von hinten ist besonders das Fersenbein gut zu erkennen.',
+    image: I.back,
+    backgroundSize: '205% auto',
+    backgroundPosition: '50% 99%',
+    callouts: [
+      { label: 'Fersenbein', latin: 'Calcaneus', point: [36, 65], labelY: 42 },
+      { label: 'Fußwurzelknochen', latin: 'Ossa tarsi', point: [42, 47], labelY: 66 },
     ],
   },
 ];
@@ -162,17 +294,43 @@ const resources = [
   ['Aufbau des Muskel-Skelettsystems', 'Weiterer deutschsprachiger Überblick.', 'https://www.arbeitsschutzfilm.de/mediathek/aufbau-des-muskel-skelettsystems-video_689346a4d.html'],
 ] as const;
 
-function DetailCard({ title, intro, image, backgroundSize, backgroundPosition, callouts }: DetailView) {
+function RegionCard({ region }: { region: Region }) {
   return (
-    <article className="rounded-3xl bg-white shadow-lg overflow-hidden">
-      <div className="p-5 pb-3"><h3 className="text-xl font-black">{title}</h3><p className="mt-2 text-sm text-slate-600 leading-6">{intro}</p></div>
-      <div className="px-5 pb-5">
-        <div className="relative h-[520px] overflow-hidden rounded-2xl border border-slate-200 bg-slate-50">
-          <div className="absolute inset-0" style={{ backgroundImage: `url(${image})`, backgroundRepeat: 'no-repeat', backgroundSize, backgroundPosition }} />
-          <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {callouts.map((item) => <g key={item.label}><line x1={item.point[0]} y1={item.point[1]} x2={item.box[0]} y2={item.box[1]} stroke="#f59e0b" strokeWidth="0.45" /><circle cx={item.point[0]} cy={item.point[1]} r="0.9" fill="#f59e0b" stroke="white" strokeWidth="0.2" /></g>)}
+    <article className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg">
+      <div className="p-5 pb-3">
+        <h3 className="text-xl font-black">{region.title}</h3>
+        <p className="mt-1 text-sm leading-6 text-slate-500">{region.intro}</p>
+      </div>
+      <div className="px-4 pb-5">
+        <div className="relative h-[500px] overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50">
+          <div
+            className="absolute inset-y-0 left-0 w-[60%]"
+            style={{
+              backgroundImage: `url(${region.image})`,
+              backgroundRepeat: 'no-repeat',
+              backgroundSize: region.backgroundSize,
+              backgroundPosition: region.backgroundPosition,
+            }}
+          />
+          <div className="absolute inset-y-0 right-0 w-[40%] bg-white/95" />
+          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+            {region.callouts.map((c) => (
+              <g key={c.label}>
+                <line x1={c.point[0]} y1={c.point[1]} x2="63" y2={c.labelY} stroke="#f59e0b" strokeWidth="0.45" />
+                <circle cx={c.point[0]} cy={c.point[1]} r="0.9" fill="#f59e0b" stroke="white" strokeWidth="0.2" />
+              </g>
+            ))}
           </svg>
-          {callouts.map((item) => <div key={item.label} className="absolute max-w-[220px] rounded-xl border border-slate-200 bg-white/95 px-3 py-2 shadow-sm" style={{ left: `${item.box[0]}%`, top: `${item.box[1]}%`, transform: 'translateY(-50%)' }}><div className="text-sm font-black">{item.label}</div><div className="text-xs italic text-slate-500">{item.latin}</div></div>)}
+          {region.callouts.map((c) => (
+            <div
+              key={c.label}
+              className="absolute right-[2.5%] w-[34%] -translate-y-1/2 rounded-xl border border-slate-200 bg-white px-2.5 py-2 shadow-sm"
+              style={{ top: `${c.labelY}%` }}
+            >
+              <div className="text-[13px] font-black leading-4 text-slate-900">{c.label}</div>
+              {c.latin && <div className="mt-0.5 text-[11px] leading-3 text-slate-500">{c.latin}</div>}
+            </div>
+          ))}
         </div>
       </div>
     </article>
@@ -183,72 +341,92 @@ export function SkeletonPage({ onBack }: Props) {
   const [side, setSide] = useState<Side>('front');
   const [mode, setMode] = useState<Mode>('labeled');
 
-  const main = side === 'front'
-    ? mode === 'labeled' ? I.frontLabeled : mode === 'numbered' ? I.frontNumbered : I.front
-    : mode === 'labeled' ? I.backLabeled : mode === 'numbered' ? I.backNumbered : I.back;
+  const main = side === 'back'
+    ? mode === 'labeled' ? I.backLabeled : mode === 'numbered' ? I.backNumbered : I.back
+    : mode === 'labeled' ? I.frontLabeled : mode === 'numbered' ? I.frontNumbered : I.front;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_8%_0%,_#fef3c7_0,_#f8fafc_30%,_#dbeafe_100%)] text-slate-900">
-      <main className="max-w-[1320px] mx-auto px-4 sm:px-6 pt-10 pb-24">
-        <button onClick={onBack} className="inline-flex items-center gap-2 rounded-2xl bg-white border border-slate-200 px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm"><ArrowLeft className="w-4 h-4" /> Zurück zu den Lernfeldern</button>
+      <main className="mx-auto max-w-[1320px] px-4 pt-10 pb-24 sm:px-6">
+        <button onClick={onBack} className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-2.5 text-sm font-bold text-slate-600 shadow-sm">
+          <ArrowLeft className="h-4 w-4" /> Zurück zu den Lernfeldern
+        </button>
 
-        <section className="mt-7 rounded-[34px] bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 text-white p-8 sm:p-11 shadow-2xl">
+        <section className="mt-7 rounded-[34px] bg-gradient-to-br from-slate-950 via-slate-900 to-amber-950 p-8 text-white shadow-2xl sm:p-11">
           <div className="max-w-5xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-amber-300/15 px-4 py-2 text-xs font-black uppercase tracking-[.16em]"><Bone className="w-4 h-4" /> Skelett lernen</div>
-            <h1 className="mt-5 text-4xl sm:text-6xl font-black tracking-tight leading-[1.02]">Schau dir die Knochen direkt am Skelett an <span className="block text-amber-300">und lerne sie Schritt für Schritt.</span></h1>
-            <p className="mt-5 text-slate-300 leading-7 sm:text-lg">Fang oben beim Schädel an und arbeite dich über Wirbelsäule und Brustkorb zu Arm, Hand, Becken, Bein und Fuß. Zu jeder wichtigen Region findest du ein eigenes Bild und die deutschen und lateinischen Namen.</p>
-            <div className="mt-6 flex flex-wrap gap-2"><span className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold">206 Knochen</span><span className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold">18 Regionsbilder</span><span className="rounded-xl bg-white/10 px-4 py-2 text-sm font-bold">Deutsch + Latein</span></div>
+            <div className="inline-flex items-center gap-2 rounded-full bg-amber-300/15 px-4 py-2 text-xs font-black uppercase tracking-[.16em]"><Bone className="h-4 w-4" /> Skelett lernen</div>
+            <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">Schau dir die Knochen direkt am Skelett an <span className="block text-amber-300">und lerne sie Schritt für Schritt.</span></h1>
+            <p className="mt-5 text-slate-300 leading-7 sm:text-lg">Fang oben beim Schädel an und arbeite dich über Wirbelsäule und Brustkorb zu Arm, Hand, Becken, Bein und Fuß. Bei den Regionsbildern zeigen dir Pfeile direkt, wo der jeweilige Knochen liegt.</p>
           </div>
         </section>
 
-        <section className="mt-9 rounded-[30px] bg-white shadow-xl p-6 sm:p-8">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-black text-teal-700"><Sparkles className="w-4 h-4" /> So kannst du lernen</div>
-          <h2 className="text-2xl sm:text-3xl font-black mt-2">Erst anschauen, dann selbst benennen</h2>
-          <div className="mt-4 grid md:grid-cols-3 gap-3 text-sm leading-6"><div className="rounded-2xl bg-amber-50 p-4">Sieh dir die Knochen zuerst <strong>mit Namen</strong> an und sprich die Begriffe laut mit.</div><div className="rounded-2xl bg-teal-50 p-4">Wechsle danach auf <strong>ohne Namen</strong> und versuche die Knochen selbst zu benennen.</div><div className="rounded-2xl bg-sky-50 p-4">Mit der Ansicht <strong>mit Nummern</strong> kannst du dich danach noch einmal selbst kontrollieren.</div></div>
+        <section className="mt-9 rounded-[30px] bg-white p-6 shadow-xl sm:p-8">
+          <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.16em] text-teal-700"><Sparkles className="h-4 w-4" /> So kannst du lernen</div>
+          <div className="mt-4 grid gap-3 text-sm leading-6 md:grid-cols-3">
+            <div className="rounded-2xl bg-amber-50 p-4">Erst <strong>mit Namen</strong> ansehen und die Begriffe laut mitsprechen.</div>
+            <div className="rounded-2xl bg-teal-50 p-4">Dann <strong>ohne Namen</strong> ansehen und selbst benennen.</div>
+            <div className="rounded-2xl bg-sky-50 p-4">Zum Schluss <strong>mit Nummern</strong> kontrollieren.</div>
+          </div>
         </section>
 
-        <section className="mt-9 rounded-[32px] bg-white shadow-xl overflow-hidden">
-          <div className="p-6 sm:p-8 border-b border-slate-100"><h2 className="text-2xl sm:text-3xl font-black">Das ganze Skelett</h2></div>
-          <div className="p-5 grid lg:grid-cols-[230px_1fr] gap-5">
+        <section className="mt-9 overflow-hidden rounded-[32px] bg-white shadow-xl">
+          <div className="border-b border-slate-100 p-6 sm:p-8"><h2 className="text-2xl font-black sm:text-3xl">Das ganze Skelett</h2></div>
+          <div className="grid gap-5 p-5 lg:grid-cols-[230px_1fr]">
             <aside className="space-y-3">
-              <div className="grid grid-cols-2 lg:grid-cols-1 gap-2"><button onClick={() => setSide('front')} className={`rounded-xl p-3 font-bold ${side === 'front' ? 'bg-teal-600 text-white' : 'bg-slate-50'}`}>Vorne</button><button onClick={() => setSide('back')} className={`rounded-xl p-3 font-bold ${side === 'back' ? 'bg-teal-600 text-white' : 'bg-slate-50'}`}>Hinten</button></div>
-              <button onClick={() => setMode('labeled')} className={`w-full flex gap-2 rounded-xl p-3 font-bold ${mode === 'labeled' ? 'bg-amber-500 text-white' : 'bg-slate-50'}`}><Eye className="w-4 h-4" /> Mit Namen</button>
-              <button onClick={() => setMode('clean')} className={`w-full flex gap-2 rounded-xl p-3 font-bold ${mode === 'clean' ? 'bg-sky-600 text-white' : 'bg-slate-50'}`}><EyeOff className="w-4 h-4" /> Ohne Namen</button>
-              <button onClick={() => setMode('numbered')} className={`w-full flex gap-2 rounded-xl p-3 font-bold ${mode === 'numbered' ? 'bg-violet-600 text-white' : 'bg-slate-50'}`}><GraduationCap className="w-4 h-4" /> Mit Nummern</button>
-              <button onClick={() => { setSide('front'); setMode('labeled'); }} className="w-full flex gap-2 rounded-xl p-3 font-bold bg-slate-50"><RotateCcw className="w-4 h-4" /> Zurücksetzen</button>
+              <div className="grid grid-cols-2 gap-2 lg:grid-cols-1">
+                <button onClick={() => setSide('front')} className={`rounded-xl p-3 font-bold ${side === 'front' ? 'bg-teal-600 text-white' : 'bg-slate-50'}`}>Vorne</button>
+                <button onClick={() => setSide('back')} className={`rounded-xl p-3 font-bold ${side === 'back' ? 'bg-teal-600 text-white' : 'bg-slate-50'}`}>Hinten</button>
+              </div>
+              <button onClick={() => setMode('labeled')} className={`flex w-full gap-2 rounded-xl p-3 font-bold ${mode === 'labeled' ? 'bg-amber-500 text-white' : 'bg-slate-50'}`}><Eye className="h-4 w-4" /> Mit Namen</button>
+              <button onClick={() => setMode('clean')} className={`flex w-full gap-2 rounded-xl p-3 font-bold ${mode === 'clean' ? 'bg-sky-600 text-white' : 'bg-slate-50'}`}><EyeOff className="h-4 w-4" /> Ohne Namen</button>
+              <button onClick={() => { setSide('front'); setMode('numbered'); }} className={`flex w-full gap-2 rounded-xl p-3 font-bold ${mode === 'numbered' ? 'bg-violet-600 text-white' : 'bg-slate-50'}`}><GraduationCap className="h-4 w-4" /> Mit Nummern</button>
+              <button onClick={() => { setSide('front'); setMode('labeled'); }} className="flex w-full gap-2 rounded-xl bg-slate-50 p-3 font-bold"><RotateCcw className="h-4 w-4" /> Zurücksetzen</button>
             </aside>
-            <div className="rounded-2xl border border-slate-200 overflow-hidden bg-slate-50"><img src={main} alt="Menschliches Skelett" className="w-full h-auto" /></div>
+            <div className="overflow-hidden rounded-2xl border border-slate-200"><img src={main} alt="Skelett" className="h-auto w-full" /></div>
           </div>
         </section>
 
         <section className="mt-11">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-black text-sky-700"><MapPinned className="w-4 h-4" /> Regionen</div>
-          <h2 className="text-3xl font-black mt-2">Jede Region noch einmal als eigenes Bild</h2>
-          <p className="text-sm text-slate-500 mt-2">So kannst du dich auf einen kleinen Bereich konzentrieren, statt immer das ganze Skelett gleichzeitig anzusehen.</p>
-          <div className="mt-6 grid md:grid-cols-2 xl:grid-cols-3 gap-5">
-            {regions.map(([title, src, scale, origin, items]) => <article key={title} className="rounded-3xl bg-white shadow-lg overflow-hidden"><div className="h-[340px] bg-slate-50" role="img" aria-label={title} style={{ backgroundImage: `url(${src})`, backgroundRepeat: 'no-repeat', backgroundSize: `${Number(scale) * 100}% auto`, backgroundPosition: origin }} /><div className="p-5"><h3 className="font-black text-lg">{title}</h3><div className="mt-3 flex flex-wrap gap-2">{items.map((x) => <span key={x} className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1.5 text-xs font-bold">{x}</span>)}</div></div></article>)}
+          <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.16em] text-sky-700"><MapPinned className="h-4 w-4" /> Regionen</div>
+          <h2 className="mt-2 text-3xl font-black">Jede Region noch einmal als eigenes Bild</h2>
+          <p className="mt-2 text-sm text-slate-500">Jetzt steht der Name nicht mehr nur unter dem Bild: Jeder Knochen wird mit einer Linie direkt im Bild markiert.</p>
+          <div className="mt-6 grid gap-6 xl:grid-cols-2">
+            {regions.map((region) => <RegionCard key={region.title} region={region} />)}
           </div>
         </section>
 
         <section className="mt-11">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-black text-violet-700"><MapPinned className="w-4 h-4" /> Detailansichten mit Pfeilen</div>
-          <h2 className="text-3xl font-black mt-2">Schwierige Bereiche noch genauer ansehen</h2>
-          <p className="text-sm text-slate-500 mt-2">Bei kleinen Knochen helfen Pfeile mehr als eine reine Liste. Hier kannst du Schädel, Halswirbelsäule, Handwurzel und Fußwurzel genauer lernen.</p>
-          <div className="mt-6 grid xl:grid-cols-2 gap-6">{detailViews.map((view) => <DetailCard key={view.title} {...view} />)}</div>
+          <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.16em] text-amber-700"><Bone className="h-4 w-4" /> Alle Knochen</div>
+          <h2 className="mt-2 text-3xl font-black">Alle Knochen nach Regionen</h2>
+          <p className="mt-2 text-sm text-slate-500">Hier kannst du die Namen danach noch einmal systematisch wiederholen.</p>
+          <div className="mt-6 grid gap-5">
+            {groups.map(([title, items]) => (
+              <article key={title} className="rounded-3xl bg-white p-6 shadow-lg">
+                <h3 className="text-xl font-black">{title}</h3>
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {items.map(([de, la, n]) => (
+                    <div key={de + la} className="flex justify-between gap-4 rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                      <div><div className="font-black">{de}</div><div className="text-sm italic text-slate-500">{la}</div></div>
+                      <span className="h-fit rounded-lg border border-slate-200 bg-white px-2 py-1 text-xs font-black">{n}</span>
+                    </div>
+                  ))}
+                </div>
+              </article>
+            ))}
+          </div>
+          <div className="mt-6 grid gap-3 rounded-3xl bg-gradient-to-r from-teal-700 to-sky-700 p-6 text-sm font-bold text-white sm:grid-cols-4">
+            <div>Axialskelett: 80</div><div>Schultergürtel + Arme: 64</div><div>Beckengürtel + Beine: 62</div><div>Gesamt: 206</div>
+          </div>
         </section>
 
         <section className="mt-11">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-black text-amber-700"><Bone className="w-4 h-4" /> Alle Knochen</div>
-          <h2 className="text-3xl font-black mt-2">Alle Knochen nach Regionen</h2>
-          <p className="text-sm text-slate-500 mt-2">Bei paarigen Knochen steht die Gesamtzahl für rechts und links zusammen.</p>
-          <div className="mt-6 grid gap-5">{groups.map(([title, items]) => <article key={title} className="rounded-3xl bg-white shadow-lg p-6"><h3 className="text-xl font-black">{title}</h3><div className="mt-4 grid md:grid-cols-2 gap-3">{items.map(([de, la, n]) => <div key={de + la} className="rounded-2xl border border-slate-200 bg-slate-50 p-4 flex justify-between gap-4"><div><div className="font-black">{de}</div><div className="text-sm italic text-slate-500">{la}</div></div><span className="text-xs font-black bg-white border border-slate-200 rounded-lg px-2 py-1 h-fit">{n}</span></div>)}</div></article>)}</div>
-          <div className="mt-6 rounded-3xl bg-gradient-to-r from-teal-700 to-sky-700 text-white p-6 grid sm:grid-cols-4 gap-3 text-sm font-bold"><div>Axialskelett: 80</div><div>Schultergürtel + Arme: 64</div><div>Beckengürtel + Beine: 62</div><div>Gesamt: 206</div></div>
-        </section>
-
-        <section className="mt-11">
-          <div className="inline-flex items-center gap-2 text-xs uppercase tracking-[.16em] font-black text-rose-700"><Film className="w-4 h-4" /> Zusatzmaterial</div>
-          <h2 className="text-3xl font-black mt-2">Deutschsprachige Videos und Erklärungen</h2>
-          <div className="mt-6 grid lg:grid-cols-3 gap-5">{resources.map(([t, d, u]) => <article key={t} className="rounded-3xl bg-white shadow-lg p-6"><h3 className="font-black text-lg">{t}</h3><p className="text-sm text-slate-600 mt-2">{d}</p><a href={u} target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-xl bg-teal-600 text-white px-4 py-2.5 text-sm font-bold">Öffnen</a></article>)}</div>
+          <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.16em] text-rose-700"><Film className="h-4 w-4" /> Zusatzmaterial</div>
+          <h2 className="mt-2 text-3xl font-black">Deutschsprachige Videos und Erklärungen</h2>
+          <div className="mt-6 grid gap-5 lg:grid-cols-3">
+            {resources.map(([t, d, u]) => (
+              <article key={t} className="rounded-3xl bg-white p-6 shadow-lg"><h3 className="text-lg font-black">{t}</h3><p className="mt-2 text-sm text-slate-600">{d}</p><a href={u} target="_blank" rel="noreferrer" className="mt-4 inline-block rounded-xl bg-teal-600 px-4 py-2.5 text-sm font-bold text-white">Öffnen</a></article>
+            ))}
+          </div>
         </section>
       </main>
     </div>
