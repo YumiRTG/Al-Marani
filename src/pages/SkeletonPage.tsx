@@ -9,7 +9,7 @@ const img = {
   frontLabeled: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_front_de.svg',
   backLabeled: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_back_en.svg',
   frontClean: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_front_no-text_no-color.svg',
-  backClean: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_back_no-text_no_color.svg',
+  backClean: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_back_no-text_no-color.svg',
   frontNumbered: 'https://commons.wikimedia.org/wiki/Special:Redirect/file/Human_skeleton_front_numbered.svg',
 };
 
@@ -95,13 +95,13 @@ export function SkeletonPage({ onBack }: Props) {
             <aside className="space-y-4">
               <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3">
                 <div className="text-[10px] uppercase tracking-[.15em] font-black text-slate-400 px-2 pb-2">Ansicht</div>
-                <div className="grid grid-cols-2 lg:grid-cols-1 gap-2"><button onClick={() => setSide('front')} className={`rounded-xl px-3 py-2.5 text-sm font-bold ${side === 'front' ? 'bg-teal-600 text-white' : 'bg-white text-slate-600'}`}>Vorne</button><button onClick={() => setSide('back')} className={`rounded-xl px-3 py-2.5 text-sm font-bold ${side === 'back' ? 'bg-teal-600 text-white' : 'bg-white text-slate-600'}`}>Hinten</button></div>
+                <div className="grid grid-cols-2 lg:grid-cols-1 gap-2"><button onClick={() => setSide('front')} className={`rounded-xl px-3 py-2.5 text-sm font-bold ${side === 'front' ? 'bg-teal-600 text-white' : 'bg-white text-slate-600'}`}>Vorne</button><button onClick={() => { setSide('back'); if (mode === 'numbered') setMode('clean'); }} className={`rounded-xl px-3 py-2.5 text-sm font-bold ${side === 'back' ? 'bg-teal-600 text-white' : 'bg-white text-slate-600'}`}>Hinten</button></div>
               </div>
               <div className="rounded-2xl bg-slate-50 border border-slate-200 p-3 space-y-2">
                 <div className="text-[10px] uppercase tracking-[.15em] font-black text-slate-400 px-2 pb-1">Lernmodus</div>
                 <button onClick={() => setMode('labeled')} className={`w-full inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold ${mode === 'labeled' ? 'bg-amber-500 text-white' : 'bg-white text-slate-600'}`}><Eye className="w-4 h-4" /> Beschriftet</button>
                 <button onClick={() => setMode('clean')} className={`w-full inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold ${mode === 'clean' ? 'bg-sky-600 text-white' : 'bg-white text-slate-600'}`}><EyeOff className="w-4 h-4" /> Ohne Namen</button>
-                <button onClick={() => setMode('numbered')} className={`w-full inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold ${mode === 'numbered' ? 'bg-violet-600 text-white' : 'bg-white text-slate-600'}`}><GraduationCap className="w-4 h-4" /> Nummeriert</button>
+                <button onClick={() => { setSide('front'); setMode('numbered'); }} className={`w-full inline-flex items-center gap-2 rounded-xl px-3 py-2.5 text-sm font-bold ${mode === 'numbered' ? 'bg-violet-600 text-white' : 'bg-white text-slate-600'}`}><GraduationCap className="w-4 h-4" /> Nummeriert (vorne)</button>
               </div>
               <div className="rounded-2xl border border-teal-200 bg-teal-50 p-4 text-sm leading-6 text-teal-900"><strong>Lernmethode:</strong> 60 Sekunden beschriftet ansehen → Namen ausblenden → Knochen laut nennen → nummerierte Ansicht kontrollieren.</div>
             </aside>
