@@ -18,20 +18,23 @@ interface Props {
   onBack: () => void;
 }
 
-interface Callout {
+type Crop = [number, number, number, number];
+
+interface Anchor {
   label: string;
-  latin?: string;
-  point: [number, number];
-  labelY: number;
+  latin: string;
+  x: number;
+  y: number;
 }
 
 interface Region {
   title: string;
-  intro: string;
+  note?: string;
   image: string;
-  backgroundSize: string;
-  backgroundPosition: string;
-  callouts: Callout[];
+  sourceWidth: number;
+  sourceHeight: number;
+  crop: Crop;
+  anchors: Anchor[];
 }
 
 const I = {
@@ -47,230 +50,240 @@ const I = {
     'https://upload.wikimedia.org/wikipedia/commons/thumb/9/9d/Human_skeleton_front_numbered.svg/1920px-Human_skeleton_front_numbered.svg.png',
   backNumbered:
     'https://upload.wikimedia.org/wikipedia/commons/thumb/7/7b/Human_skeleton_back_no-text_no-color.svg/960px-Human_skeleton_back_no-text_no-color.svg.png',
-};
+} as const;
 
 const regions: Region[] = [
   {
-    title: 'Hirnschädel',
-    intro: 'Die Pfeile zeigen dir direkt, wo die einzelnen Knochen am Schädel liegen.',
+    title: 'Hirnschädel – Vorderseite',
+    note: 'Keilbein und Siebbein sind von vorne nur teilweise sichtbar.',
     image: I.front,
-    backgroundSize: '185% auto',
-    backgroundPosition: '48% 4%',
-    callouts: [
-      { label: 'Stirnbein', latin: 'Os frontale', point: [31, 25], labelY: 12 },
-      { label: 'Scheitelbein', latin: 'Os parietale', point: [40, 14], labelY: 27 },
-      { label: 'Schläfenbein', latin: 'Os temporale', point: [49, 39], labelY: 42 },
-      { label: 'Hinterhauptbein', latin: 'Os occipitale', point: [40, 56], labelY: 57 },
-      { label: 'Keilbein', latin: 'Os sphenoidale', point: [44, 45], labelY: 72 },
-      { label: 'Siebbein', latin: 'Os ethmoidale', point: [39, 47], labelY: 87 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [430, 20, 420, 350],
+    anchors: [
+      { label: 'Stirnbein', latin: 'Os frontale', x: 640, y: 105 },
+      { label: 'Scheitelbein', latin: 'Os parietale', x: 705, y: 92 },
+      { label: 'Schläfenbein', latin: 'Os temporale', x: 720, y: 205 },
+      { label: 'Keilbein', latin: 'Os sphenoidale', x: 695, y: 216 },
+      { label: 'Siebbein', latin: 'Os ethmoidale', x: 640, y: 216 },
+    ],
+  },
+  {
+    title: 'Hirnschädel – Rückseite',
+    image: I.back,
+    sourceWidth: 960,
+    sourceHeight: 2256,
+    crop: [300, 20, 360, 280],
+    anchors: [
+      { label: 'Scheitelbein', latin: 'Os parietale', x: 530, y: 110 },
+      { label: 'Hinterhauptbein', latin: 'Os occipitale', x: 480, y: 175 },
+      { label: 'Schläfenbein', latin: 'Os temporale', x: 590, y: 220 },
     ],
   },
   {
     title: 'Gesichtsschädel',
-    intro: 'Hier kannst du Kiefer, Nasenbereich und Jochbein direkt am Gesichtsschädel zuordnen.',
+    note: 'Das Gaumenbein liegt weiter innen und ist in dieser Vorderansicht nur eingeschränkt zu sehen.',
     image: I.front,
-    backgroundSize: '195% auto',
-    backgroundPosition: '50% 10%',
-    callouts: [
-      { label: 'Nasenbein', latin: 'Os nasale', point: [40, 40], labelY: 8 },
-      { label: 'Oberkiefer', latin: 'Maxilla', point: [38, 53], labelY: 20 },
-      { label: 'Unterkiefer', latin: 'Mandibula', point: [44, 70], labelY: 32 },
-      { label: 'Jochbein', latin: 'Os zygomaticum', point: [51, 49], labelY: 44 },
-      { label: 'Tränenbein', latin: 'Os lacrimale', point: [43, 44], labelY: 56 },
-      { label: 'Gaumenbein', latin: 'Os palatinum', point: [40, 59], labelY: 68 },
-      { label: 'Untere Nasenmuschel', latin: 'Concha nasalis inferior', point: [42, 50], labelY: 80 },
-      { label: 'Pflugscharbein', latin: 'Vomer', point: [40, 55], labelY: 92 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [470, 150, 350, 235],
+    anchors: [
+      { label: 'Nasenbein', latin: 'Os nasale', x: 640, y: 215 },
+      { label: 'Oberkiefer', latin: 'Maxilla', x: 610, y: 280 },
+      { label: 'Unterkiefer', latin: 'Mandibula', x: 640, y: 340 },
+      { label: 'Jochbein', latin: 'Os zygomaticum', x: 720, y: 255 },
+      { label: 'Tränenbein', latin: 'Os lacrimale', x: 615, y: 218 },
+      { label: 'Untere Nasenmuschel', latin: 'Concha nasalis inferior', x: 640, y: 250 },
+      { label: 'Pflugscharbein', latin: 'Vomer', x: 640, y: 265 },
     ],
   },
   {
     title: 'Halswirbelsäule',
-    intro: 'Atlas und Axis sind die ersten beiden Halswirbel. Die Pfeile zeigen ihre Lage direkt unter dem Schädel.',
     image: I.front,
-    backgroundSize: '205% auto',
-    backgroundPosition: '50% 19%',
-    callouts: [
-      { label: 'Atlas', latin: 'C1', point: [42, 27], labelY: 25 },
-      { label: 'Axis', latin: 'C2', point: [42, 36], labelY: 48 },
-      { label: 'Halswirbel C1–C7', latin: 'Vertebrae cervicales', point: [42, 53], labelY: 73 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [520, 330, 240, 235],
+    anchors: [
+      { label: 'Atlas', latin: 'C1', x: 640, y: 365 },
+      { label: 'Axis', latin: 'C2', x: 640, y: 395 },
+      { label: 'Halswirbel C1–C7', latin: 'Vertebrae cervicales', x: 640, y: 475 },
     ],
   },
   {
     title: 'Brustkorb',
-    intro: 'Brustbein und Rippen schützen Herz und Lunge. Die Brustwirbel liegen hinten in der Mitte.',
     image: I.front,
-    backgroundSize: '155% auto',
-    backgroundPosition: '50% 31%',
-    callouts: [
-      { label: 'Brustbein', latin: 'Sternum', point: [41, 46], labelY: 25 },
-      { label: 'Rippen', latin: 'Costae', point: [30, 45], labelY: 50 },
-      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', point: [42, 50], labelY: 75 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [330, 470, 620, 520],
+    anchors: [
+      { label: 'Brustbein', latin: 'Sternum', x: 640, y: 700 },
+      { label: 'Rippen', latin: 'Costae', x: 485, y: 710 },
+      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', x: 640, y: 770 },
     ],
   },
   {
     title: 'Wirbelsäule von hinten',
-    intro: 'Von hinten kannst du die Abschnitte der Wirbelsäule besonders gut von oben nach unten verfolgen.',
     image: I.back,
-    backgroundSize: '145% auto',
-    backgroundPosition: '50% 42%',
-    callouts: [
-      { label: 'Halswirbel', latin: 'Vertebrae cervicales', point: [41, 17], labelY: 12 },
-      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', point: [41, 37], labelY: 30 },
-      { label: 'Lendenwirbel', latin: 'Vertebrae lumbales', point: [41, 58], labelY: 49 },
-      { label: 'Kreuzbein', latin: 'Os sacrum', point: [41, 72], labelY: 68 },
-      { label: 'Steißbein', latin: 'Os coccygis', point: [41, 79], labelY: 86 },
+    sourceWidth: 960,
+    sourceHeight: 2256,
+    crop: [350, 250, 260, 870],
+    anchors: [
+      { label: 'Halswirbel', latin: 'Vertebrae cervicales', x: 480, y: 320 },
+      { label: 'Brustwirbel', latin: 'Vertebrae thoracicae', x: 480, y: 590 },
+      { label: 'Lendenwirbel', latin: 'Vertebrae lumbales', x: 480, y: 820 },
+      { label: 'Kreuzbein', latin: 'Os sacrum', x: 480, y: 1015 },
+      { label: 'Steißbein', latin: 'Os coccygis', x: 480, y: 1080 },
     ],
   },
   {
     title: 'Schultergürtel',
-    intro: 'Schlüsselbein und Schulterblatt verbinden die obere Extremität mit dem Rumpf.',
     image: I.front,
-    backgroundSize: '175% auto',
-    backgroundPosition: '50% 27%',
-    callouts: [
-      { label: 'Schlüsselbein', latin: 'Clavicula', point: [33, 28], labelY: 35 },
-      { label: 'Schulterblatt', latin: 'Scapula', point: [49, 38], labelY: 65 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [250, 440, 780, 280],
+    anchors: [
+      { label: 'Schlüsselbein', latin: 'Clavicula', x: 520, y: 520 },
+      { label: 'Schulterblatt', latin: 'Scapula', x: 845, y: 585 },
     ],
   },
   {
     title: 'Oberarm',
-    intro: 'Im Oberarm liegt nur ein Knochen: der Humerus.',
     image: I.front,
-    backgroundSize: '220% auto',
-    backgroundPosition: '8% 38%',
-    callouts: [{ label: 'Oberarmknochen', latin: 'Humerus', point: [31, 49], labelY: 50 }],
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [170, 500, 220, 500],
+    anchors: [{ label: 'Oberarmknochen', latin: 'Humerus', x: 285, y: 750 }],
   },
   {
     title: 'Unterarm',
-    intro: 'Im Unterarm liegen Radius und Ulna nebeneinander. Der Radius liegt auf der Daumenseite.',
     image: I.front,
-    backgroundSize: '225% auto',
-    backgroundPosition: '7% 51%',
-    callouts: [
-      { label: 'Speiche', latin: 'Radius', point: [27, 45], labelY: 37 },
-      { label: 'Elle', latin: 'Ulna', point: [34, 48], labelY: 64 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [170, 900, 210, 370],
+    anchors: [
+      { label: 'Speiche', latin: 'Radius', x: 305, y: 1090 },
+      { label: 'Elle', latin: 'Ulna', x: 235, y: 1090 },
     ],
   },
   {
     title: 'Handwurzel',
-    intro: 'Die acht Handwurzelknochen liegen dicht zusammen. Die Pfeile helfen dir, sie einzeln zu erkennen.',
+    note: 'Der Erbsenknochen liegt auf der Handflächenseite über dem Dreiecksbein und ist in dieser Ansicht nur teilweise erkennbar.',
     image: I.front,
-    backgroundSize: '260% auto',
-    backgroundPosition: '7% 61%',
-    callouts: [
-      { label: 'Kahnbein', latin: 'Os scaphoideum', point: [23, 37], labelY: 8 },
-      { label: 'Mondbein', latin: 'Os lunatum', point: [28, 37], labelY: 20 },
-      { label: 'Dreiecksbein', latin: 'Os triquetrum', point: [33, 39], labelY: 32 },
-      { label: 'Erbsenbein', latin: 'Os pisiforme', point: [36, 42], labelY: 44 },
-      { label: 'Großes Vieleckbein', latin: 'Os trapezium', point: [23, 49], labelY: 56 },
-      { label: 'Kleines Vieleckbein', latin: 'Os trapezoideum', point: [28, 49], labelY: 68 },
-      { label: 'Kopfbein', latin: 'Os capitatum', point: [33, 50], labelY: 80 },
-      { label: 'Hakenbein', latin: 'Os hamatum', point: [38, 50], labelY: 92 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [150, 1240, 175, 170],
+    anchors: [
+      { label: 'Kahnbein', latin: 'Os scaphoideum', x: 270, y: 1295 },
+      { label: 'Mondbein', latin: 'Os lunatum', x: 235, y: 1295 },
+      { label: 'Dreiecksbein', latin: 'Os triquetrum', x: 200, y: 1305 },
+      { label: 'Erbsenbein', latin: 'Os pisiforme', x: 185, y: 1320 },
+      { label: 'Großes Vieleckbein', latin: 'Os trapezium', x: 285, y: 1345 },
+      { label: 'Kleines Vieleckbein', latin: 'Os trapezoideum', x: 255, y: 1345 },
+      { label: 'Kopfbein', latin: 'Os capitatum', x: 225, y: 1350 },
+      { label: 'Hakenbein', latin: 'Os hamatum', x: 195, y: 1350 },
     ],
   },
   {
     title: 'Mittelhand und Finger',
-    intro: 'Von der Handwurzel geht es über die Mittelhand bis zu den einzelnen Fingergliedern.',
     image: I.front,
-    backgroundSize: '250% auto',
-    backgroundPosition: '7% 65%',
-    callouts: [
-      { label: 'Mittelhandknochen I–V', latin: 'Ossa metacarpi', point: [30, 43], labelY: 20 },
-      { label: 'Grundphalangen', latin: 'Phalanges proximales', point: [31, 55], labelY: 42 },
-      { label: 'Mittelphalangen', latin: 'Phalanges mediae', point: [31, 67], labelY: 64 },
-      { label: 'Endphalangen', latin: 'Phalanges distales', point: [31, 80], labelY: 84 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [145, 1320, 210, 260],
+    anchors: [
+      { label: 'Mittelhandknochen I–V', latin: 'Ossa metacarpi', x: 250, y: 1400 },
+      { label: 'Grundphalangen', latin: 'Phalanges proximales', x: 245, y: 1470 },
+      { label: 'Mittelphalangen', latin: 'Phalanges mediae', x: 245, y: 1515 },
+      { label: 'Endphalangen', latin: 'Phalanges distales', x: 245, y: 1560 },
     ],
   },
   {
     title: 'Becken',
-    intro: 'Im Becken kannst du Darmbein, Sitzbein und Schambein als Anteile des Hüftbeins unterscheiden.',
     image: I.front,
-    backgroundSize: '175% auto',
-    backgroundPosition: '50% 57%',
-    callouts: [
-      { label: 'Hüftbein', latin: 'Os coxae', point: [29, 42], labelY: 12 },
-      { label: 'Darmbein', latin: 'Os ilium', point: [27, 34], labelY: 30 },
-      { label: 'Sitzbein', latin: 'Os ischii', point: [31, 58], labelY: 48 },
-      { label: 'Schambein', latin: 'Os pubis', point: [39, 53], labelY: 66 },
-      { label: 'Kreuzbein', latin: 'Os sacrum', point: [42, 42], labelY: 84 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [410, 1010, 470, 350],
+    anchors: [
+      { label: 'Darmbein', latin: 'Os ilium', x: 500, y: 1120 },
+      { label: 'Sitzbein', latin: 'Os ischii', x: 530, y: 1290 },
+      { label: 'Schambein', latin: 'Os pubis', x: 620, y: 1270 },
+      { label: 'Kreuzbein', latin: 'Os sacrum', x: 640, y: 1165 },
     ],
   },
   {
     title: 'Oberschenkel',
-    intro: 'Der Femur ist der größte Knochen des menschlichen Körpers.',
     image: I.front,
-    backgroundSize: '175% auto',
-    backgroundPosition: '50% 69%',
-    callouts: [{ label: 'Oberschenkelknochen', latin: 'Femur', point: [35, 52], labelY: 50 }],
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [430, 1260, 420, 580],
+    anchors: [{ label: 'Oberschenkelknochen', latin: 'Femur', x: 535, y: 1550 }],
   },
   {
     title: 'Knie',
-    intro: 'Am Knie treffen Femur und Tibia aufeinander. Vorne liegt die Kniescheibe.',
     image: I.front,
-    backgroundSize: '240% auto',
-    backgroundPosition: '50% 78%',
-    callouts: [
-      { label: 'Oberschenkelknochen', latin: 'Femur', point: [34, 31], labelY: 25 },
-      { label: 'Kniescheibe', latin: 'Patella', point: [36, 50], labelY: 50 },
-      { label: 'Schienbein', latin: 'Tibia', point: [37, 69], labelY: 75 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [430, 1740, 420, 285],
+    anchors: [
+      { label: 'Oberschenkelknochen', latin: 'Femur', x: 535, y: 1785 },
+      { label: 'Kniescheibe', latin: 'Patella', x: 535, y: 1860 },
+      { label: 'Schienbein', latin: 'Tibia', x: 545, y: 1950 },
     ],
   },
   {
     title: 'Unterschenkel',
-    intro: 'Tibia und Fibula verlaufen parallel. Die Tibia ist deutlich kräftiger.',
     image: I.front,
-    backgroundSize: '175% auto',
-    backgroundPosition: '50% 88%',
-    callouts: [
-      { label: 'Schienbein', latin: 'Tibia', point: [36, 49], labelY: 38 },
-      { label: 'Wadenbein', latin: 'Fibula', point: [45, 49], labelY: 64 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [430, 1900, 420, 500],
+    anchors: [
+      { label: 'Schienbein', latin: 'Tibia', x: 545, y: 2170 },
+      { label: 'Wadenbein', latin: 'Fibula', x: 620, y: 2170 },
     ],
   },
   {
     title: 'Fußwurzel',
-    intro: 'Die sieben Fußwurzelknochen bilden den hinteren Teil des Fußes.',
+    note: 'Die kleinen Fußwurzelknochen liegen dicht beieinander. Die Marker zeigen die anatomischen Bereiche im rechten Fuß.',
     image: I.front,
-    backgroundSize: '190% auto',
-    backgroundPosition: '50% 97%',
-    callouts: [
-      { label: 'Sprungbein', latin: 'Talus', point: [38, 34], labelY: 10 },
-      { label: 'Fersenbein', latin: 'Calcaneus', point: [29, 48], labelY: 23 },
-      { label: 'Kahnbein', latin: 'Os naviculare', point: [48, 44], labelY: 36 },
-      { label: 'Würfelbein', latin: 'Os cuboideum', point: [54, 56], labelY: 49 },
-      { label: 'Keilbein medial', latin: 'Os cuneiforme mediale', point: [49, 48], labelY: 62 },
-      { label: 'Keilbein intermedium', latin: 'Os cuneiforme intermedium', point: [53, 47], labelY: 75 },
-      { label: 'Keilbein lateral', latin: 'Os cuneiforme laterale', point: [57, 48], labelY: 88 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [610, 2320, 330, 245],
+    anchors: [
+      { label: 'Sprungbein', latin: 'Talus', x: 690, y: 2385 },
+      { label: 'Fersenbein', latin: 'Calcaneus', x: 655, y: 2425 },
+      { label: 'Kahnbein', latin: 'Os naviculare', x: 730, y: 2415 },
+      { label: 'Würfelbein', latin: 'Os cuboideum', x: 720, y: 2450 },
+      { label: 'Mediales Keilbein', latin: 'Os cuneiforme mediale', x: 760, y: 2435 },
+      { label: 'Mittleres Keilbein', latin: 'Os cuneiforme intermedium', x: 785, y: 2438 },
+      { label: 'Laterales Keilbein', latin: 'Os cuneiforme laterale', x: 810, y: 2445 },
     ],
   },
   {
     title: 'Mittelfuß',
-    intro: 'Die fünf Mittelfußknochen liegen zwischen Fußwurzel und Zehen.',
     image: I.front,
-    backgroundSize: '200% auto',
-    backgroundPosition: '50% 99%',
-    callouts: [{ label: 'Mittelfußknochen I–V', latin: 'Ossa metatarsi', point: [43, 55], labelY: 50 }],
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [610, 2380, 330, 180],
+    anchors: [{ label: 'Mittelfußknochen I–V', latin: 'Ossa metatarsi', x: 770, y: 2475 }],
   },
   {
     title: 'Zehen',
-    intro: 'Die Zehen bestehen aus Grund-, Mittel- und Endphalangen. Die Großzehe besitzt keine Mittelphalanx.',
     image: I.front,
-    backgroundSize: '220% auto',
-    backgroundPosition: '50% 100%',
-    callouts: [
-      { label: 'Grundphalangen', latin: 'Phalanges proximales', point: [40, 58], labelY: 25 },
-      { label: 'Mittelphalangen', latin: 'Phalanges mediae', point: [43, 70], labelY: 50 },
-      { label: 'Endphalangen', latin: 'Phalanges distales', point: [45, 82], labelY: 75 },
+    sourceWidth: 1280,
+    sourceHeight: 2599,
+    crop: [650, 2450, 290, 145],
+    anchors: [
+      { label: 'Grundphalangen', latin: 'Phalanges proximales', x: 795, y: 2510 },
+      { label: 'Mittelphalangen', latin: 'Phalanges mediae', x: 835, y: 2535 },
+      { label: 'Endphalangen', latin: 'Phalanges distales', x: 865, y: 2555 },
     ],
   },
   {
     title: 'Ferse und hinterer Fuß',
-    intro: 'Von hinten ist besonders das Fersenbein gut zu erkennen.',
     image: I.back,
-    backgroundSize: '205% auto',
-    backgroundPosition: '50% 99%',
-    callouts: [
-      { label: 'Fersenbein', latin: 'Calcaneus', point: [36, 65], labelY: 42 },
-      { label: 'Fußwurzelknochen', latin: 'Ossa tarsi', point: [42, 47], labelY: 66 },
-    ],
+    sourceWidth: 960,
+    sourceHeight: 2256,
+    crop: [380, 2070, 220, 180],
+    anchors: [{ label: 'Fersenbein', latin: 'Calcaneus', x: 480, y: 2165 }],
   },
 ];
 
@@ -294,44 +307,74 @@ const resources = [
   ['Aufbau des Muskel-Skelettsystems', 'Weiterer deutschsprachiger Überblick.', 'https://www.arbeitsschutzfilm.de/mediathek/aufbau-des-muskel-skelettsystems-video_689346a4d.html'],
 ] as const;
 
-function RegionCard({ region }: { region: Region }) {
+function RegionDiagram({ region }: { region: Region }) {
+  const [cropX, cropY, cropW, cropH] = region.crop;
+  const viewW = 1200;
+  const viewH = Math.max(620, 90 + region.anchors.length * 68);
+  const imageArea = { x: 20, y: 20, w: 760, h: viewH - 40 };
+  const labelX = 820;
+  const labelW = 350;
+  const scale = Math.min(imageArea.w / cropW, imageArea.h / cropH);
+  const cropDrawW = cropW * scale;
+  const cropDrawH = cropH * scale;
+  const cropLeft = imageArea.x + (imageArea.w - cropDrawW) / 2;
+  const cropTop = imageArea.y + (imageArea.h - cropDrawH) / 2;
+  const imageX = cropLeft - cropX * scale;
+  const imageY = cropTop - cropY * scale;
+  const imageWidth = region.sourceWidth * scale;
+  const imageHeight = region.sourceHeight * scale;
+  const topPadding = 44;
+  const usable = viewH - topPadding * 2;
+  const step = region.anchors.length > 1 ? usable / (region.anchors.length - 1) : 0;
+
   return (
     <article className="overflow-hidden rounded-3xl border border-slate-100 bg-white shadow-lg">
       <div className="p-5 pb-3">
-        <h3 className="text-xl font-black">{region.title}</h3>
-        <p className="mt-1 text-sm leading-6 text-slate-500">{region.intro}</p>
+        <h3 className="text-xl font-black text-slate-900">{region.title}</h3>
+        {region.note && <p className="mt-2 text-sm leading-6 text-amber-700">{region.note}</p>}
       </div>
-      <div className="px-4 pb-5">
-        <div className="relative h-[500px] overflow-hidden rounded-[24px] border border-slate-200 bg-slate-50">
-          <div
-            className="absolute inset-y-0 left-0 w-[60%]"
-            style={{
-              backgroundImage: `url(${region.image})`,
-              backgroundRepeat: 'no-repeat',
-              backgroundSize: region.backgroundSize,
-              backgroundPosition: region.backgroundPosition,
-            }}
+      <div className="px-4 pb-4">
+        <svg viewBox={`0 0 ${viewW} ${viewH}`} className="h-auto w-full rounded-2xl border border-slate-200 bg-slate-50" role="img" aria-label={region.title}>
+          <defs>
+            <clipPath id={`clip-${region.title.replace(/[^a-zA-Z0-9]/g, '-')}`}>
+              <rect x={imageArea.x} y={imageArea.y} width={imageArea.w} height={imageArea.h} rx="24" />
+            </clipPath>
+          </defs>
+
+          <rect x={imageArea.x} y={imageArea.y} width={imageArea.w} height={imageArea.h} rx="24" fill="#ffffff" />
+          <image
+            href={region.image}
+            x={imageX}
+            y={imageY}
+            width={imageWidth}
+            height={imageHeight}
+            clipPath={`url(#clip-${region.title.replace(/[^a-zA-Z0-9]/g, '-')})`}
+            preserveAspectRatio="none"
           />
-          <div className="absolute inset-y-0 right-0 w-[40%] bg-white/95" />
-          <svg className="absolute inset-0 h-full w-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-            {region.callouts.map((c) => (
-              <g key={c.label}>
-                <line x1={c.point[0]} y1={c.point[1]} x2="63" y2={c.labelY} stroke="#f59e0b" strokeWidth="0.45" />
-                <circle cx={c.point[0]} cy={c.point[1]} r="0.9" fill="#f59e0b" stroke="white" strokeWidth="0.2" />
+
+          {region.anchors.map((a, index) => {
+            const px = cropLeft + (a.x - cropX) * scale;
+            const py = cropTop + (a.y - cropY) * scale;
+            const labelY = region.anchors.length === 1 ? viewH / 2 : topPadding + index * step;
+            const boxH = 54;
+            return (
+              <g key={`${region.title}-${a.label}`}>
+                <polyline
+                  points={`${px},${py} ${labelX - 34},${py} ${labelX},${labelY}`}
+                  fill="none"
+                  stroke="#f59e0b"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+                <circle cx={px} cy={py} r="7" fill="#f59e0b" stroke="#ffffff" strokeWidth="2" />
+                <rect x={labelX} y={labelY - boxH / 2} width={labelW} height={boxH} rx="14" fill="#ffffff" stroke="#dbe3ee" strokeWidth="2" />
+                <text x={labelX + 16} y={labelY - 4} fontSize="18" fontWeight="800" fill="#0f172a">{a.label}</text>
+                <text x={labelX + 16} y={labelY + 17} fontSize="14" fill="#64748b">{a.latin}</text>
               </g>
-            ))}
-          </svg>
-          {region.callouts.map((c) => (
-            <div
-              key={c.label}
-              className="absolute right-[2.5%] w-[34%] -translate-y-1/2 rounded-xl border border-slate-200 bg-white px-2.5 py-2 shadow-sm"
-              style={{ top: `${c.labelY}%` }}
-            >
-              <div className="text-[13px] font-black leading-4 text-slate-900">{c.label}</div>
-              {c.latin && <div className="mt-0.5 text-[11px] leading-3 text-slate-500">{c.latin}</div>}
-            </div>
-          ))}
-        </div>
+            );
+          })}
+        </svg>
       </div>
     </article>
   );
@@ -341,9 +384,18 @@ export function SkeletonPage({ onBack }: Props) {
   const [side, setSide] = useState<Side>('front');
   const [mode, setMode] = useState<Mode>('labeled');
 
-  const main = side === 'back'
-    ? mode === 'labeled' ? I.backLabeled : mode === 'numbered' ? I.backNumbered : I.back
-    : mode === 'labeled' ? I.frontLabeled : mode === 'numbered' ? I.frontNumbered : I.front;
+  const main =
+    side === 'back'
+      ? mode === 'labeled'
+        ? I.backLabeled
+        : mode === 'numbered'
+          ? I.backNumbered
+          : I.back
+      : mode === 'labeled'
+        ? I.frontLabeled
+        : mode === 'numbered'
+          ? I.frontNumbered
+          : I.front;
 
   return (
     <div className="min-h-screen bg-[radial-gradient(circle_at_8%_0%,_#fef3c7_0,_#f8fafc_30%,_#dbeafe_100%)] text-slate-900">
@@ -356,7 +408,7 @@ export function SkeletonPage({ onBack }: Props) {
           <div className="max-w-5xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-amber-300/15 px-4 py-2 text-xs font-black uppercase tracking-[.16em]"><Bone className="h-4 w-4" /> Skelett lernen</div>
             <h1 className="mt-5 text-4xl font-black leading-[1.02] tracking-tight sm:text-6xl">Schau dir die Knochen direkt am Skelett an <span className="block text-amber-300">und lerne sie Schritt für Schritt.</span></h1>
-            <p className="mt-5 text-slate-300 leading-7 sm:text-lg">Fang oben beim Schädel an und arbeite dich über Wirbelsäule und Brustkorb zu Arm, Hand, Becken, Bein und Fuß. Bei den Regionsbildern zeigen dir Pfeile direkt, wo der jeweilige Knochen liegt.</p>
+            <p className="mt-5 text-slate-300 leading-7 sm:text-lg">Die Marker werden jetzt aus den Originalkoordinaten der Skelettbilder berechnet. Dadurch bleiben die Pfeile beim Zoomen und auf unterschiedlichen Bildschirmgrößen an derselben anatomischen Stelle.</p>
           </div>
         </section>
 
@@ -389,9 +441,9 @@ export function SkeletonPage({ onBack }: Props) {
         <section className="mt-11">
           <div className="inline-flex items-center gap-2 text-xs font-black uppercase tracking-[.16em] text-sky-700"><MapPinned className="h-4 w-4" /> Regionen</div>
           <h2 className="mt-2 text-3xl font-black">Jede Region noch einmal als eigenes Bild</h2>
-          <p className="mt-2 text-sm text-slate-500">Jetzt steht der Name nicht mehr nur unter dem Bild: Jeder Knochen wird mit einer Linie direkt im Bild markiert.</p>
+          <p className="mt-2 text-sm text-slate-500">Die Pfeile sind jetzt technisch an die Originalpositionen im Skelettbild gekoppelt und verschieben sich nicht mehr durch den Bildzoom.</p>
           <div className="mt-6 grid gap-6 xl:grid-cols-2">
-            {regions.map((region) => <RegionCard key={region.title} region={region} />)}
+            {regions.map((region) => <RegionDiagram key={region.title} region={region} />)}
           </div>
         </section>
 
