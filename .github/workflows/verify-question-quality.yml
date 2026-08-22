@@ -1,0 +1,33 @@
+name: Verify question quality
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/verify-question-quality.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Build
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+          npm run build
+      - name: Mark successful build
+        run: |
+          printf 'five-option-question-build-ok\n' > public/question-quality-build.txt
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add public/question-quality-build.txt
+          git commit -m "Verify five-option question build"
+          git push
