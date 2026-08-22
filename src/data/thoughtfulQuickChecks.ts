@@ -92,8 +92,17 @@ function encodeQuestion(question: QuizQuestion) {
   const options = question.options || [];
   const correct = options.filter(option => option.correct).map(option => clean(option.text));
   const wrong = options.filter(option => !option.correct).map(option => clean(option.text));
-  if (!correct.length || correct.length + wrong.length < 5) return null;
+  if (!correct.length || correct.length + wrong.length !== 5) return null;
   return [question.question, correct.join('&&&'), ...wrong].join('|||');
+}
+
+function invertEncodedQuestion(encoded: string, title: string) {
+  const parts = encoded.split('|||').map(clean);
+  if (parts.length < 3) return null;
+  const correct = parts[1].split('&&&').map(clean).filter(Boolean);
+  const wrong = parts.slice(2).filter(Boolean);
+  if (!correct.length || !wrong.length || correct.length + wrong.length !== 5) return null;
+  return [`Welche Aussagen zu „${title}“ sind fachlich NICHT richtig?`, wrong.join('&&&'), ...correct].join('|||');
 }
 
 function statementFromRow(row: string[]) {
@@ -143,8 +152,8 @@ function localFallback(title: string, blocks: TopicContent[], offset: number) {
     if (block.type === 'list') facts.push(...(block.items || []).map(item => item.split('|||')[0]));
   });
   const uniqueFacts = Array.from(new Set(facts.map(clean).filter(value => value.length >= 18))).slice(0, 5);
-  if (uniqueFacts.length >= 5) {
-    return [`Welche Aussagen fassen „${title}“ korrekt zusammen?`, uniqueFacts.join('&&&')].join('|||');
+  if (uniqueFacts.length === 5 && offset === 0) {
+    return [`Welche Aussagen sind in „${title}“ tatsächlich als Kernaussagen enthalten?`, uniqueFacts.join('&&&')].join('|||');
   }
   return null;
 }
@@ -171,7 +180,10 @@ function chooseChecks(title: string, blocks: TopicContent[], topicBody: string, 
     offset += 1;
   }
 
-  if (encoded.length === 1) encoded.push(encoded[0]);
+  if (encoded.length === 1) {
+    const inverse = invertEncodedQuestion(encoded[0], title);
+    if (inverse && inverse !== encoded[0]) encoded.push(inverse);
+  }
   return encoded.slice(0, 2);
 }
 
@@ -179,7 +191,7 @@ function rebuildSegment(title: string, blocks: TopicContent[], topicBody: string
   const practiceIndex = blocks.findIndex(isPracticeHeading);
   const visible = practiceIndex >= 0 ? blocks.slice(0, practiceIndex) : blocks;
   const checks = chooseChecks(title, visible, topicBody, questions);
-  if (!checks.length) return blocks;
+  if (!checks.length) return visible;
 
   return [
     ...visible,
@@ -189,7 +201,6 @@ function rebuildSegment(title: string, blocks: TopicContent[], topicBody: string
 }
 
 function polishTopic(topic: LearningTopic, questions: QuizQuestion[]) {
-  // Lernfeld 9 besitzt bereits vollständig manuell kuratierte Kurz-Checks.
   const topicBody = topic.content.map(blockText).join(' ');
   const segments: { title: string; blocks: TopicContent[] }[] = [];
   let current: { title: string; blocks: TopicContent[] } = { title: 'Überblick', blocks: [] };
