@@ -129,27 +129,6 @@ function fallbackPractice(title: string, blocks: TopicContent[]): PracticeSource
   ];
 }
 
-function makeOptions(correctValue: string, pool: string[], seed: number): QuizOption[] {
-  const correct = shortAnswer(correctValue);
-  const candidates = unique(pool.map(value => shortAnswer(value))).filter(value => value !== correct && value.length >= 5);
-  const distractors: string[] = [];
-  for (let offset = 0; offset < candidates.length && distractors.length < 3; offset += 1) {
-    const value = candidates[(seed + offset * 3) % candidates.length];
-    if (value && !distractors.includes(value)) distractors.push(value);
-  }
-  const fallbacks = [
-    'Diese Aussage gehört nicht zu diesem Lernabschnitt.',
-    'Das Gegenteil davon wäre in diesem Zusammenhang richtig.',
-    'Diese Aussage hat hier keine fachliche Bedeutung.',
-  ];
-  fallbacks.forEach(value => {
-    if (distractors.length < 3 && value !== correct && !distractors.includes(value)) distractors.push(value);
-  });
-  const entries = [{ text: correct, correct: true }, ...distractors.slice(0, 3).map(text => ({ text, correct: false }))];
-  const shift = seed % entries.length;
-  return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
-}
-
 function makeQuickCheckOptions(
   questionText: string,
   correctValues: string[],
