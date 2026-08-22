@@ -137,14 +137,14 @@ function makeQuickCheckOptions(
   questionBank: QuizQuestion[] = [],
 ): QuizOption[] {
   const correct = unique(correctValues.map(value => shortAnswer(value))).filter(Boolean);
-  return buildFiveOptions(questionText, correct, questionBank, seed, explicitDistractors);
+  const curatedDistractors = unique(explicitDistractors.map(value => shortAnswer(value))).filter(Boolean);
+  const hasCompleteLocalSet = correct.length + curatedDistractors.length >= 5;
+  return buildFiveOptions(questionText, correct, hasCompleteLocalSet ? [] : questionBank, seed, curatedDistractors);
 }
 
 function buildChecks(sources: PracticeSource[], blocks: TopicContent[], seed: number, questionBank: QuizQuestion[]): QuickCheck[] {
-  const fallback = fallbackPractice('diesem Thema', blocks);
   const selected = [...sources.slice(0, 2)];
-  while (selected.length < 2) selected.push(fallback[selected.length] || fallback[0]);
-  return selected.slice(0, 2).map((source, index) => ({
+  return selected.map((source, index) => ({
     question: source.question || 'Welche Aussage ist richtig?',
     options: makeQuickCheckOptions(source.question, source.solutions, seed + index * 11, source.distractors, questionBank),
     explanation: source.solutions.join(' · '),
@@ -191,7 +191,7 @@ function splitTopicIntoSteps(topic: LearningTopic, topicIndex: number, questionB
     let blocks = raw.blocks.filter((_, index) => !hidden.has(index));
     if (blocks[0]?.type === 'heading' && blocks[0].title === raw.title) blocks = blocks.slice(1);
     const parsed = practiceItems.map(item => parsePracticeItem(item, blocks));
-    const sources = parsed.length ? parsed : fallbackPractice(raw.title, blocks);
+    const sources = parsed;
     return {
       key: `${topic.id}::${stepIndex}`,
       topicIndex,
@@ -507,13 +507,13 @@ export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult,
             </aside>
 
             <main className="min-w-0">
-              <div className="bg-white/85 rounded-2xl p-4 sm:p-5 shadow-sm border border-white mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><div className="text-xs font-bold uppercase tracking-[.14em] text-teal-600">{activeTopic.title}</div><div className="text-sm text-slate-500 mt-1">Lernteil {activeIndex + 1} von {allSteps.length}</div></div><div className="text-xs font-semibold text-slate-500 bg-slate-100 rounded-full px-3 py-1.5">2 Klickfragen · Überspringen möglich</div></div>
+              <div className="bg-white/85 rounded-2xl p-4 sm:p-5 shadow-sm border border-white mb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-3"><div><div className="text-xs font-bold uppercase tracking-[.14em] text-teal-600">{activeTopic.title}</div><div className="text-sm text-slate-500 mt-1">Lernteil {activeIndex + 1} von {allSteps.length}</div></div><div className="text-xs font-semibold text-slate-500 bg-slate-100 rounded-full px-3 py-1.5">{activeStep.checks.length} Klickfrage{activeStep.checks.length === 1 ? '' : 'n'} · Überspringen möglich</div></div>
               <motion.article key={activeStep.key} initial={{ opacity: 0, x: 18 }} animate={{ opacity: 1, x: 0 }} className="bg-white rounded-[28px] shadow-[0_18px_45px_rgba(15,23,42,0.07)] border border-white overflow-hidden">
                 <div className="p-5 sm:p-8 border-b border-slate-200 bg-gradient-to-br from-white to-teal-50"><h2 className="text-xl sm:text-2xl font-bold text-slate-900">{activeStep.title}</h2></div>
                 <div className="p-5 sm:p-8">
                   <TopicRenderer content={activeStep.blocks} />
                   <section className="mt-8 rounded-3xl overflow-hidden border border-teal-200 bg-gradient-to-br from-teal-50 to-sky-50">
-                    <div className="p-5 sm:p-6 border-b border-teal-200 flex justify-between gap-3"><div><div className="flex items-center gap-2 text-teal-700 font-bold"><ListChecks className="w-5 h-5" /> Kurz-Check</div><p className="text-sm text-slate-500 mt-1">Anklicken, prüfen und direkt sehen, warum es richtig oder falsch ist.</p></div><div className="px-3 py-1.5 rounded-full bg-white text-xs font-bold text-teal-700 shadow-sm h-fit">2 Fragen</div></div>
+                    <div className="p-5 sm:p-6 border-b border-teal-200 flex justify-between gap-3"><div><div className="flex items-center gap-2 text-teal-700 font-bold"><ListChecks className="w-5 h-5" /> Kurz-Check</div><p className="text-sm text-slate-500 mt-1">Anklicken, prüfen und direkt sehen, warum es richtig oder falsch ist.</p></div><div className="px-3 py-1.5 rounded-full bg-white text-xs font-bold text-teal-700 shadow-sm h-fit">{activeStep.checks.length} Frage{activeStep.checks.length === 1 ? '' : 'n'}</div></div>
                     <div className="p-5 sm:p-6 space-y-5">
                       {activeStep.checks.map((check, index) => {
                         const key = checkKey(activeStep, index);
