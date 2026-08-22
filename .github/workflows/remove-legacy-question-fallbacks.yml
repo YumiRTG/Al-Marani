@@ -1,0 +1,46 @@
+name: Remove legacy question fallbacks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/remove-legacy-question-fallbacks.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Remove unused legacy generator
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/pages/ModuleDetailV4.tsx')
+          text = path.read_text(encoding='utf-8')
+          start = text.find('function makeOptions(')
+          end = text.find('function makeQuickCheckOptions(', start)
+          if start < 0 or end < 0:
+              raise SystemExit('legacy makeOptions block not found')
+          text = text[:start] + text[end:]
+          path.write_text(text, encoding='utf-8')
+          PY
+      - name: Build
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+          npm run build
+      - name: Commit cleanup
+        run: |
+          rm .github/workflows/remove-legacy-question-fallbacks.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/ModuleDetailV4.tsx .github/workflows/remove-legacy-question-fallbacks.yml
+          git commit -m "Remove legacy generic answer fallbacks"
+          git push
