@@ -1,0 +1,36 @@
+name: Upgrade all question options
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/upgrade-question-options.yml'
+      - 'scripts/upgrade_all_question_options.py'
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - name: Upgrade question engine
+        run: python scripts/upgrade_all_question_options.py
+      - name: Build
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+          npm run build
+      - name: Commit upgraded engine and clean migration files
+        run: |
+          rm -f scripts/upgrade_all_question_options.py .github/workflows/upgrade-question-options.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/pages/ModuleDetailV4.tsx scripts/upgrade_all_question_options.py .github/workflows/upgrade-question-options.yml
+          git commit -m "Use five logical options across all questions"
+          git push
