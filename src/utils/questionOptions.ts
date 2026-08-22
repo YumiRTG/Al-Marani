@@ -1,3 +1,4 @@
+import { getCuratedDistractors } from '@/data/questionDistractorOverrides';
 import type { LearningModule, QuizOption, QuizQuestion } from '@/types';
 
 const stopWords = new Set([
@@ -68,13 +69,14 @@ function correctTexts(question: QuizQuestion) {
 }
 
 function convertedOpenAnswer(question: QuizQuestion) {
+  if (question.explanation?.trim()) return clean(question.explanation);
   if (Array.isArray(question.correctAnswer) && question.correctAnswer.length) {
     return clean(question.correctAnswer.join(' · '));
   }
   if (typeof question.correctAnswer === 'string' && question.correctAnswer.trim()) {
-    return clean(question.correctAnswer);
+    return clean(question.correctAnswer.split(',').join(' · '));
   }
-  return clean(question.explanation);
+  return 'Die richtige Antwort ergibt sich aus dem zugehörigen Lerninhalt.';
 }
 
 function overlap(a: Set<string>, b: Set<string>) {
@@ -217,8 +219,10 @@ export function polishQuestionOptions(module: LearningModule): LearningModule {
     const existingWrong = (question.options || [])
       .filter(option => !option.correct && !isBadOption(option.text))
       .map(option => option.text);
-    const options = buildFiveOptions(question.question, correct, originalQuestions, module.number * 101 + index * 17, existingWrong);
-    const multiple = wasSelection && options.filter(option => option.correct).length > 1;
+    const curatedWrong = getCuratedDistractors(module.id, question.id) || [];
+    const preferredWrong = curatedWrong.length ? curatedWrong : existingWrong;
+    const options = buildFiveOptions(question.question, correct, originalQuestions, module.number * 101 + index * 17, preferredWrong);
+    const multiple = options.filter(option => option.correct).length > 1;
 
     return {
       ...question,
