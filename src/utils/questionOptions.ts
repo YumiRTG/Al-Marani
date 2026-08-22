@@ -67,6 +67,16 @@ function correctTexts(question: QuizQuestion) {
   return question.explanation ? [clean(question.explanation)] : [];
 }
 
+function convertedOpenAnswer(question: QuizQuestion) {
+  if (Array.isArray(question.correctAnswer) && question.correctAnswer.length) {
+    return clean(question.correctAnswer.join(' · '));
+  }
+  if (typeof question.correctAnswer === 'string' && question.correctAnswer.trim()) {
+    return clean(question.correctAnswer);
+  }
+  return clean(question.explanation);
+}
+
 function overlap(a: Set<string>, b: Set<string>) {
   let hits = 0;
   a.forEach(token => { if (b.has(token)) hits += 1; });
@@ -202,19 +212,19 @@ export function buildFiveOptions(
 export function polishQuestionOptions(module: LearningModule): LearningModule {
   const originalQuestions = module.questions;
   const questions = originalQuestions.map((question, index): QuizQuestion => {
-    if (question.type !== 'single' && question.type !== 'multiple') return question;
-
-    const correct = correctTexts(question);
+    const wasSelection = question.type === 'single' || question.type === 'multiple';
+    const correct = wasSelection ? correctTexts(question) : [convertedOpenAnswer(question)];
     const existingWrong = (question.options || [])
       .filter(option => !option.correct && !isBadOption(option.text))
       .map(option => option.text);
     const options = buildFiveOptions(question.question, correct, originalQuestions, module.number * 101 + index * 17, existingWrong);
-    const multiple = options.filter(option => option.correct).length > 1;
+    const multiple = wasSelection && options.filter(option => option.correct).length > 1;
 
     return {
       ...question,
       type: multiple ? 'multiple' : 'single',
       options,
+      correctAnswer: undefined,
     };
   });
 
