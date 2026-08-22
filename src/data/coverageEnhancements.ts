@@ -3,15 +3,31 @@ import type { LearningModule, LearningTopic, QuizQuestion, TopicContent } from '
 function correctAnswerText(question: QuizQuestion) {
   if ((question.type === 'single' || question.type === 'multiple') && question.options?.length) {
     const correct = question.options.filter(option => option.correct).map(option => option.text);
-    if (correct.length) return correct.join(' · ');
+    if (correct.length) return correct.join('&&&');
   }
 
-  if (Array.isArray(question.correctAnswer)) return question.correctAnswer.join(' · ');
+  if (Array.isArray(question.correctAnswer)) return question.correctAnswer.join('&&&');
   if (typeof question.correctAnswer === 'string' && question.correctAnswer.trim()) {
-    return question.correctAnswer.split(',').map(part => part.trim()).filter(Boolean).join(' · ');
+    return question.correctAnswer.split(',').map(part => part.trim()).filter(Boolean).join('&&&');
   }
 
   return question.explanation;
+}
+
+function displayCorrectAnswer(question: QuizQuestion) {
+  return correctAnswerText(question).split('&&&').join(' · ');
+}
+
+function wrongAnswerTexts(question: QuizQuestion) {
+  return (question.options || [])
+    .filter(option => !option.correct)
+    .map(option => option.text.trim())
+    .filter(Boolean);
+}
+
+function encodePracticeQuestion(question: QuizQuestion) {
+  const parts = [question.question, correctAnswerText(question), ...wrongAnswerTexts(question)];
+  return parts.join('|||');
 }
 
 function summarizeTopic(topic: LearningTopic) {
@@ -60,12 +76,12 @@ function buildQuizCoverageTopic(module: LearningModule): LearningTopic | null {
     content.push({
       type: 'table',
       headers: ['Frage', 'Richtige Kernaussage', 'Begründung'],
-      rows: group.map(question => [question.question, correctAnswerText(question), question.explanation]),
+      rows: group.map(question => [question.question, displayCorrectAnswer(question), question.explanation]),
     });
     content.push({ type: 'heading', title: 'Übungen' });
     content.push({
       type: 'list',
-      items: group.map(question => `${question.question}|||${correctAnswerText(question)}. ${question.explanation}`),
+      items: group.map(encodePracticeQuestion),
     });
   }
 
