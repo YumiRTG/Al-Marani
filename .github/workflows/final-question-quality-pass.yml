@@ -1,0 +1,72 @@
+name: Final question quality pass
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/final-question-quality-pass.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  quality:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Curate LF9 final distractors
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/data/questionDistractorOverrides.ts')
+          text = path.read_text(encoding='utf-8')
+          marker = '  // Lernfeld 10\n'
+          if "'lf9:15'" not in text:
+              block = '''  // Lernfeld 9 – Abschlussfragen mit fachnahen Distraktoren\n  'lf9:15': [\n    'Rektoskopie',\n    'Koloskopie',\n    'Gastroskopie',\n    'Abdomensonografie',\n  ],\n  'lf9:18': [\n    'Wellenförmige Schmerzen im rechten Oberbauch nach fettreicher Mahlzeit',\n    'Juckreiz am After mit hellrotem Blut am Toilettenpapier',\n    'Schmerz im linken Unterbauch mit Fieber bei bekannten Divertikeln',\n    'Schmerzlose Gelbfärbung der Haut bei einer Abflussstörung der Gallenwege',\n  ],\n  'lf9:19': [\n    'Die Schmerzen liegen typischerweise im linken Unterbauch und gehen mit Fieber einher.',\n    'Eine Gallenkolik verläuft typischerweise vollständig schmerzlos.',\n    'Die Beschwerden entstehen vor allem durch eine Entzündung des Wurmfortsatzes.',\n    'Eine Gallenkolik ist typischerweise durch häufiges Wasserlassen und starken Durst gekennzeichnet.',\n  ],\n  'lf9:25': [\n    'Eine isolierte Laktoseintoleranz ohne weitere Stoffwechselrisiken',\n    'Eine akute Appendizitis',\n    'Eine kurzzeitige Gastritis',\n    'Eine unkomplizierte Erkältung',\n  ],\n  'lf9:36': [\n    'Diabetische Neuropathie als primäre Nervenschädigung',\n    'Periphere arterielle Verschlusskrankheit als makroangiopathische Folge',\n    'Koronare Herzkrankheit als makroangiopathische Folge',\n    'Akuter Gallensteinverschluss',\n  ],\n  'lf9:48': [\n    'Ausgeprägter Durst mit Polyurie als typisches Zeichen einer Hyperglykämie',\n    'Schmerzloser Ikterus',\n    'Gallenkolik nach fettreicher Mahlzeit',\n    'Isolierte Dysphagie',\n  ],\n\n'''
+              if marker not in text:
+                  raise SystemExit('LF10 marker not found')
+              text = text.replace(marker, block + marker, 1)
+              path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Clarify multiple-answer UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          path = Path('src/pages/ModuleDetailV4.tsx')
+          text = path.read_text(encoding='utf-8')
+          text = text.replace(
+              'Mehrere Antworten möglich · alle richtigen auswählen',
+              'Mehrfachauswahl · je nach Frage können 2–5 Antworten richtig sein · alle richtigen auswählen'
+          )
+          text = text.replace(
+              '{questions.length} Aufgaben · Punkte und Schulnote am Ende · maximal eine offene Aufgabe',
+              '{questions.length} Aufgaben · jeweils 5 Antwortmöglichkeiten · Punkte und Schulnote am Ende'
+          )
+          needle = '''<h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-5">{question.question}</h3>{(question.type === 'single' || question.type === 'multiple') && question.options && <div className="space-y-2.5 mb-6">'''
+          replacement = '''<h3 className="text-base sm:text-lg font-semibold text-slate-900 mb-3">{question.question}</h3>{question.type === 'multiple' && <div className="mb-5 rounded-xl border border-violet-200 bg-violet-50 px-4 py-3 text-xs font-bold text-violet-700">Mehrfachauswahl: Je nach Frage können 2–5 Antworten richtig sein. Wähle alle richtigen Antworten aus.</div>}{(question.type === 'single' || question.type === 'multiple') && question.options && <div className="space-y-2.5 mb-6">'''
+          if needle not in text:
+              raise SystemExit('FinalControl question block not found')
+          text = text.replace(needle, replacement, 1)
+          path.write_text(text, encoding='utf-8')
+          PY
+
+      - name: Build verified production bundle
+        run: |
+          rm -f package-lock.json
+          npm install --legacy-peer-deps
+          npm run build
+
+      - name: Commit verified quality pass
+        run: |
+          rm .github/workflows/final-question-quality-pass.yml
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add src/data/questionDistractorOverrides.ts src/pages/ModuleDetailV4.tsx .github/workflows/final-question-quality-pass.yml
+          git commit -m "Finish question quality pass across all learning fields"
+          git push
