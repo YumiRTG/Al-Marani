@@ -567,6 +567,44 @@ const curated: Record<string, string[]> = {
     'Zielzellen werden allein durch ihre räumliche Nähe zur Hormondrüse bestimmt.',
   ],
 
+  // Lernfeld 9 – Abschlussfragen mit fachnahen Distraktoren
+  'lf9:15': [
+    'Rektoskopie',
+    'Koloskopie',
+    'Gastroskopie',
+    'Abdomensonografie',
+  ],
+  'lf9:18': [
+    'Wellenförmige Schmerzen im rechten Oberbauch nach fettreicher Mahlzeit',
+    'Juckreiz am After mit hellrotem Blut am Toilettenpapier',
+    'Schmerz im linken Unterbauch mit Fieber bei bekannten Divertikeln',
+    'Schmerzlose Gelbfärbung der Haut bei einer Abflussstörung der Gallenwege',
+  ],
+  'lf9:19': [
+    'Die Schmerzen liegen typischerweise im linken Unterbauch und gehen mit Fieber einher.',
+    'Eine Gallenkolik verläuft typischerweise vollständig schmerzlos.',
+    'Die Beschwerden entstehen vor allem durch eine Entzündung des Wurmfortsatzes.',
+    'Eine Gallenkolik ist typischerweise durch häufiges Wasserlassen und starken Durst gekennzeichnet.',
+  ],
+  'lf9:25': [
+    'Eine isolierte Laktoseintoleranz ohne weitere Stoffwechselrisiken',
+    'Eine akute Appendizitis',
+    'Eine kurzzeitige Gastritis',
+    'Eine unkomplizierte Erkältung',
+  ],
+  'lf9:36': [
+    'Diabetische Neuropathie als primäre Nervenschädigung',
+    'Periphere arterielle Verschlusskrankheit als makroangiopathische Folge',
+    'Koronare Herzkrankheit als makroangiopathische Folge',
+    'Akuter Gallensteinverschluss',
+  ],
+  'lf9:48': [
+    'Ausgeprägter Durst mit Polyurie als typisches Zeichen einer Hyperglykämie',
+    'Schmerzloser Ikterus',
+    'Gallenkolik nach fettreicher Mahlzeit',
+    'Isolierte Dysphagie',
+  ],
+
   // Lernfeld 10
   'lf10:2': [
     'Eine Stichwunde ist aufgrund der kleinen Hautöffnung in der Regel nur oberflächlich.',
