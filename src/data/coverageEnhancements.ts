@@ -1,3 +1,4 @@
+import { getCuratedDistractors } from './questionDistractorOverrides';
 import type { LearningModule, LearningTopic, QuizQuestion, TopicContent } from '@/types';
 
 function correctAnswerText(question: QuizQuestion) {
@@ -6,27 +7,30 @@ function correctAnswerText(question: QuizQuestion) {
     if (correct.length) return correct.join('&&&');
   }
 
-  if (Array.isArray(question.correctAnswer)) return question.correctAnswer.join('&&&');
+  if (question.explanation?.trim()) return question.explanation.trim();
+  if (Array.isArray(question.correctAnswer)) return question.correctAnswer.join(' · ');
   if (typeof question.correctAnswer === 'string' && question.correctAnswer.trim()) {
-    return question.correctAnswer.split(',').map(part => part.trim()).filter(Boolean).join('&&&');
+    return question.correctAnswer.split(',').map(part => part.trim()).filter(Boolean).join(' · ');
   }
 
-  return question.explanation;
+  return 'Die richtige Antwort ergibt sich aus dem Lerninhalt.';
 }
 
 function displayCorrectAnswer(question: QuizQuestion) {
   return correctAnswerText(question).split('&&&').join(' · ');
 }
 
-function wrongAnswerTexts(question: QuizQuestion) {
+function wrongAnswerTexts(moduleId: string, question: QuizQuestion) {
+  const curated = getCuratedDistractors(moduleId, question.id);
+  if (curated?.length) return curated;
   return (question.options || [])
     .filter(option => !option.correct)
     .map(option => option.text.trim())
     .filter(Boolean);
 }
 
-function encodePracticeQuestion(question: QuizQuestion) {
-  const parts = [question.question, correctAnswerText(question), ...wrongAnswerTexts(question)];
+function encodePracticeQuestion(moduleId: string, question: QuizQuestion) {
+  const parts = [question.question, correctAnswerText(question), ...wrongAnswerTexts(moduleId, question)];
   return parts.join('|||');
 }
 
@@ -81,7 +85,7 @@ function buildQuizCoverageTopic(module: LearningModule): LearningTopic | null {
     content.push({ type: 'heading', title: 'Übungen' });
     content.push({
       type: 'list',
-      items: group.map(encodePracticeQuestion),
+      items: group.map(question => encodePracticeQuestion(module.id, question)),
     });
   }
 
