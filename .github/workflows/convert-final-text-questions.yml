@@ -72,3 +72,4 @@ jobs:
           git add src/pages/ModuleDetailV4.tsx .github/workflows/convert-final-text-questions.yml
           git commit -m "Give every final question five answer options"
           git push
+# retrigger-current-main
