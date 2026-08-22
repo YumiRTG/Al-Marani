@@ -161,7 +161,7 @@ export function buildFiveOptions(
   explicitDistractors: string[] = [],
 ): QuizOption[] {
   const normalizedCorrect = unique(correct.map(clean).filter(Boolean));
-  const correctLimited = normalizedCorrect.slice(0, 4);
+  const correctLimited = normalizedCorrect.slice(0, 5);
   const neededWrong = Math.max(0, 5 - correctLimited.length);
   const wrong = logicalDistractorsForQuestion(questionText, correctLimited, questions, neededWrong, explicitDistractors);
   const entries = [
