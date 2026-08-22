@@ -25,6 +25,7 @@ import {
 } from 'lucide-react';
 import { MiniCrossword } from '@/components/MiniCrossword';
 import { LearningRewardGame } from '@/components/LearningRewardGame';
+import { buildFiveOptions } from '@/utils/questionOptions';
 import type { LearningModule, LearningResult, LearningTopic, QuizOption, QuizQuestion, TopicContent } from '@/types';
 
 interface ModuleDetailProps {
@@ -149,38 +150,30 @@ function makeOptions(correctValue: string, pool: string[], seed: number): QuizOp
   return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
 }
 
-function makeQuickCheckOptions(correctValues: string[], seed: number, explicitDistractors: string[] = []): QuizOption[] {
+function makeQuickCheckOptions(
+  questionText: string,
+  correctValues: string[],
+  seed: number,
+  explicitDistractors: string[] = [],
+  questionBank: QuizQuestion[] = [],
+): QuizOption[] {
   const correct = unique(correctValues.map(value => shortAnswer(value))).filter(Boolean);
-  const fallbackDistractors = [
-    'Diese Aussage widerspricht dem im Lernabschnitt beschriebenen Zusammenhang.',
-    'Die genannten Fachbegriffe können hier beliebig gleichgesetzt werden.',
-    'Der im Lernabschnitt erklärte Zusammenhang gilt genau umgekehrt.',
-    'Diese Aussage lässt sich aus dem Lernstoff nicht ableiten.',
-  ];
-  const distractors = unique([...explicitDistractors.map(value => shortAnswer(value)), ...fallbackDistractors])
-    .filter(value => !correct.includes(value) && value.length >= 5);
-  const wrongCount = Math.max(2, 5 - correct.length);
-  const entries = [
-    ...correct.map(text => ({ text, correct: true })),
-    ...distractors.slice(0, wrongCount).map(text => ({ text, correct: false })),
-  ];
-  const shift = entries.length ? seed % entries.length : 0;
-  return [...entries.slice(shift), ...entries.slice(0, shift)].map((entry, index) => ({ id: String.fromCharCode(97 + index), ...entry }));
+  return buildFiveOptions(questionText, correct, questionBank, seed, explicitDistractors);
 }
 
-function buildChecks(sources: PracticeSource[], blocks: TopicContent[], seed: number): QuickCheck[] {
+function buildChecks(sources: PracticeSource[], blocks: TopicContent[], seed: number, questionBank: QuizQuestion[]): QuickCheck[] {
   const fallback = fallbackPractice('diesem Thema', blocks);
   const selected = [...sources.slice(0, 2)];
   while (selected.length < 2) selected.push(fallback[selected.length] || fallback[0]);
   return selected.slice(0, 2).map((source, index) => ({
     question: source.question || 'Welche Aussage ist richtig?',
-    options: makeQuickCheckOptions(source.solutions, seed + index * 11, source.distractors),
+    options: makeQuickCheckOptions(source.question, source.solutions, seed + index * 11, source.distractors, questionBank),
     explanation: source.solutions.join(' · '),
     multiple: source.solutions.length > 1,
   }));
 }
 
-function splitTopicIntoSteps(topic: LearningTopic, topicIndex: number): GuidedStep[] {
+function splitTopicIntoSteps(topic: LearningTopic, topicIndex: number, questionBank: QuizQuestion[]): GuidedStep[] {
   const rawSteps: { title: string; blocks: TopicContent[] }[] = [];
   let current: { title: string; blocks: TopicContent[] } | null = null;
   const intro: TopicContent[] = [];
@@ -226,7 +219,7 @@ function splitTopicIntoSteps(topic: LearningTopic, topicIndex: number): GuidedSt
       stepIndex,
       title: raw.title,
       blocks,
-      checks: buildChecks(sources, blocks, topicIndex * 37 + stepIndex * 13 + 5),
+      checks: buildChecks(sources, blocks, topicIndex * 37 + stepIndex * 13 + 5, questionBank),
       challenge: parsed[2]?.question || parsed.find(item => item.question.length > 120)?.question,
     };
   });
@@ -243,7 +236,6 @@ function answerText(question: QuizQuestion) {
 }
 
 function normalizeFinalQuestions(module: LearningModule): QuizQuestion[] {
-  const pool = module.questions.map(answerText).filter(Boolean);
   let keptOpen = false;
   return module.questions.map((question, index) => {
     if (question.type === 'single' || question.type === 'multiple') return { ...question, id: 20000 + index };
@@ -256,7 +248,7 @@ function normalizeFinalQuestions(module: LearningModule): QuizQuestion[] {
       ...question,
       id: 20000 + index,
       type: 'single' as const,
-      options: makeOptions(correct, pool, index * 9 + module.number * 7),
+      options: buildFiveOptions(question.question, [correct], module.questions, index * 9 + module.number * 7),
       correctAnswer: undefined,
     };
   });
@@ -285,7 +277,7 @@ function isQuestionCorrect(question: QuizQuestion, answer: string | string[] | u
 
 export function ModuleDetail({ module, onBack, onUpdateProgress, onUpdateResult, currentProgress, allModules, onOpenModule }: ModuleDetailProps) {
   const [activeTab, setActiveTab] = useState<Tab>('learn');
-  const topicSteps = useMemo(() => module.topics.map((topic, index) => splitTopicIntoSteps(topic, index)), [module.topics]);
+  const topicSteps = useMemo(() => module.topics.map((topic, index) => splitTopicIntoSteps(topic, index, module.questions)), [module.topics, module.questions]);
   const allSteps = useMemo(() => topicSteps.flat(), [topicSteps]);
   const controlQuestions = useMemo(() => normalizeFinalQuestions(module), [module]);
 
