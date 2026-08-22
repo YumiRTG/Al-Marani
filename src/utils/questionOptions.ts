@@ -21,6 +21,8 @@ const badOptionPatterns = [
   /kommt in (diesem|dem) thema nicht vor/i,
 ];
 
+type OptionStyle = 'numeric' | 'short' | 'sentence';
+
 function clean(value: string) {
   return value.replace(/\s+/g, ' ').trim();
 }
@@ -71,15 +73,31 @@ function overlap(a: Set<string>, b: Set<string>) {
   return hits;
 }
 
-function candidateScore(questionText: string, correct: string[], sourceQuestion: QuizQuestion, optionText: string) {
+function optionStyle(value: string): OptionStyle {
+  const text = clean(value);
+  if (/^(?:ca\.\s*)?\d+(?:[.,]\d+)?(?:\s*(?:-|bis)\s*\d+(?:[.,]\d+)?)?(?:\s*(?:minuten?|stunden?|tage?|wochen?|monate?|jahre?|%|mmhg|mg\/dl|mmol\/l))?\.?$/i.test(text)) return 'numeric';
+  if (text.split(/\s+/).length <= 6 && text.length <= 58 && !/[.!?].+\S/.test(text)) return 'short';
+  return 'sentence';
+}
+
+function preferredStyle(correct: string[], explicit: string[]): OptionStyle {
+  const samples = [...correct, ...explicit].filter(Boolean);
+  const counts: Record<OptionStyle, number> = { numeric: 0, short: 0, sentence: 0 };
+  samples.forEach(value => { counts[optionStyle(value)] += 1; });
+  return (Object.entries(counts) as [OptionStyle, number][]).sort((a, b) => b[1] - a[1])[0]?.[0] || 'sentence';
+}
+
+function candidateScore(questionText: string, correct: string[], sourceQuestion: QuizQuestion, optionText: string, style: OptionStyle) {
   const currentQuestionTokens = tokens(questionText);
   const currentContextTokens = tokens(`${questionText} ${correct.join(' ')}`);
   const sourceTokens = tokens(sourceQuestion.question);
   const optionTokens = tokens(optionText);
-  const exactQuestionBonus = normalize(questionText) === normalize(sourceQuestion.question) ? 100 : 0;
+  const exactQuestionBonus = normalize(questionText) === normalize(sourceQuestion.question) ? 180 : 0;
+  const styleBonus = optionStyle(optionText) === style ? 18 : 0;
   return exactQuestionBonus
-    + overlap(currentQuestionTokens, sourceTokens) * 12
-    + overlap(currentContextTokens, optionTokens) * 5
+    + styleBonus
+    + overlap(currentQuestionTokens, sourceTokens) * 14
+    + overlap(currentContextTokens, optionTokens) * 6
     + overlap(sourceTokens, optionTokens) * 2;
 }
 
@@ -91,7 +109,7 @@ function numericNearMisses(correct: string[]) {
     const raw = matches[0][0];
     const number = Number(raw.replace(',', '.'));
     if (!Number.isFinite(number)) return;
-    const deltas = number <= 5 ? [1, 2] : number <= 20 ? [2, 4] : [5, 10];
+    const deltas = number <= 5 ? [1, 2] : number <= 20 ? [2, 4] : number <= 100 ? [5, 10] : [10, 20];
     deltas.forEach(delta => {
       [number - delta, number + delta].forEach(candidate => {
         if (candidate < 0 || candidate === number) return;
@@ -113,6 +131,7 @@ export function logicalDistractorsForQuestion(
   const correctKeys = new Set(correct.map(normalize));
   const used = new Set<string>();
   const result: string[] = [];
+  const style = preferredStyle(correct, explicit);
 
   const push = (value: string) => {
     const text = clean(value);
@@ -124,13 +143,19 @@ export function logicalDistractorsForQuestion(
 
   explicit.forEach(push);
 
+  if (result.length < count && style === 'numeric') {
+    numericNearMisses(correct).forEach(value => {
+      if (result.length < count) push(value);
+    });
+  }
+
   if (result.length < count) {
     const ranked = questions.flatMap(sourceQuestion =>
       (sourceQuestion.options || [])
         .filter(option => !option.correct && !isBadOption(option.text))
         .map(option => ({
           text: clean(option.text),
-          score: candidateScore(questionText, correct, sourceQuestion, option.text),
+          score: candidateScore(questionText, correct, sourceQuestion, option.text, style),
         })),
     ).sort((a, b) => b.score - a.score);
 
@@ -143,7 +168,7 @@ export function logicalDistractorsForQuestion(
 
   if (result.length < count) {
     const remainingWrong = questions.flatMap(question =>
-      (question.options || []).filter(option => !option.correct).map(option => option.text),
+      (question.options || []).filter(option => !option.correct && !isBadOption(option.text)).map(option => option.text),
     );
     remainingWrong.forEach(value => {
       if (result.length < count) push(value);
